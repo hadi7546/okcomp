@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="crispEdges">
+  <!-- computer case -->
+  <rect x="2" y="1" width="27" height="21" fill="#c0c0c0"/>
+  <!-- case right shadow -->
+  <rect x="27" y="2" width="2" height="20" fill="#909090"/>
+  <!-- case bottom shadow -->
+  <rect x="3" y="21" width="26" height="1" fill="#909090"/>
+  <!-- screen bezel -->
+  <rect x="4" y="2" width="21" height="18" fill="#808080"/>
+  <!-- bezel highlight -->
+  <rect x="4" y="2" width="21" height="1" fill="#b0b0b0"/>
+  <rect x="4" y="2" width="1" height="18" fill="#b0b0b0"/>
+  <!-- screen surface -->
+  <rect x="6" y="4" width="17" height="14" fill="#f0f0e8"/>
+  <!-- O letter -->
+  <rect x="8"  y="7" width="3" height="1" fill="#cc0000"/>
+  <rect x="7"  y="8" width="1" height="3" fill="#cc0000"/>
+  <rect x="11" y="8" width="1" height="3" fill="#cc0000"/>
+  <rect x="8"  y="11" width="3" height="1" fill="#cc0000"/>
+  <!-- K letter -->
+  <rect x="14" y="7" width="1" height="5" fill="#cc0000"/>
+  <rect x="17" y="7" width="1" height="1" fill="#cc0000"/>
+  <rect x="16" y="8" width="1" height="1" fill="#cc0000"/>
+  <rect x="15" y="9" width="1" height="1" fill="#cc0000"/>
+  <rect x="16" y="10" width="1" height="1" fill="#cc0000"/>
+  <rect x="17" y="11" width="1" height="1" fill="#cc0000"/>
+  <!-- cursor -->
+  <rect x="19" y="10" width="2" height="2" fill="#cc0000"/>
+  <!-- lower body -->
+  <rect x="2" y="22" width="27" height="3" fill="#b8b8b8"/>
+  <!-- floppy slot -->
+  <rect x="4" y="23" width="14" height="1" fill="#505050"/>
+  <!-- LED -->
+  <rect x="20" y="23" width="2" height="1" fill="#4499cc"/>
+  <!-- power button -->
+  <rect x="23" y="23" width="4" height="1" fill="#999999"/>
+  <!-- keyboard base -->
+  <rect x="0" y="26" width="32" height="6" fill="#a8a8a8"/>
+  <rect x="0" y="26" width="32" height="1" fill="#c4c4c4"/>
+  <!-- keys row 1 -->
+  <rect x="1"  y="27" width="2" height="2" fill="#e8e8e8"/>
+  <rect x="4"  y="27" width="2" height="2" fill="#2a2a2a"/>
+  <rect x="7"  y="27" width="2" height="2" fill="#e8e8e8"/>
+  <rect x="10" y="27" width="2" height="2" fill="#2a2a2a"/>
+  <rect x="13" y="27" width="2" height="2" fill="#e8e8e8"/>
+  <rect x="16" y="27" width="2" height="2" fill="#2a2a2a"/>
+  <rect x="19" y="27" width="2" height="2" fill="#e8e8e8"/>
+  <rect x="22" y="27" width="2" height="2" fill="#2a2a2a"/>
+  <rect x="25" y="27" width="2" height="2" fill="#e8e8e8"/>
+  <rect x="28" y="27" width="2" height="2" fill="#2a2a2a"/>
+  <!-- keys row 2 -->
+  <rect x="2"  y="30" width="2" height="2" fill="#2a2a2a"/>
+  <rect x="5"  y="30" width="2" height="2" fill="#e8e8e8"/>
+  <rect x="8"  y="30" width="2" height="2" fill="#2a2a2a"/>
+  <rect x="11" y="30" width="2" height="2" fill="#e8e8e8"/>
+  <rect x="14" y="30" width="2" height="2" fill="#2a2a2a"/>
+  <rect x="17" y="30" width="2" height="2" fill="#e8e8e8"/>
+  <rect x="20" y="30" width="2" height="2" fill="#2a2a2a"/>
+  <rect x="23" y="30" width="2" height="2" fill="#e8e8e8"/>
+  <rect x="26" y="30" width="2" height="2" fill="#2a2a2a"/>
+  <rect x="29" y="30" width="2" height="2" fill="#e8e8e8"/>
+</svg>
+```
+
+Now let me link it in the HTML `<head>`.

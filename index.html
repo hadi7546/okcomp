@@ -1,0 +1,1869 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>okcomp</title>
+        <link rel="icon" href="./images/favicon.png" />
+        <style>
+            @font-face {
+                font-family: "VT323";
+                src: url("VT323-Regular.ttf") format("truetype");
+                font-weight: normal;
+                font-style: normal;
+                font-display: swap;
+            }
+
+            :root {
+                --bg: #f0f0e8;
+                --fg: #1a1a18;
+                --blue: #5ba3d0;
+                --blue-dark: #1d5a8a;
+                --blue-pale: #c5dff0;
+                --accent: #d04a20;
+                --gray: #888880;
+                --pixel: 4px;
+                --card-bg: #ffffff;
+                --ci-logo-bg: #ffffff;
+                --ci-logo-filter: none;
+            }
+
+            @media (prefers-color-scheme: light) {
+                :root:not([data-theme="light"]) {
+                    --bg: #0c0c0a;
+                    --fg: #e8e8e0;
+                    --blue: #6ab4e0;
+                    --blue-dark: #8ac8f0;
+                    --blue-pale: #0e2232;
+                    --accent: #e05828;
+                    --gray: #7a7a72;
+                    --card-bg: #181816;
+                }
+            }
+
+            :root[data-theme="dark"] {
+                --bg: #0c0c0a;
+                --fg: #e8e8e0;
+                --blue: #6ab4e0;
+                --blue-dark: #8ac8f0;
+                --blue-pale: #0e2232;
+                --accent: #e05828;
+                --gray: #7a7a72;
+                --card-bg: #181816;
+                --ci-logo-bg: transparent;
+                --ci-logo-filter: brightness(0) invert(1);
+            }
+
+            :root[data-theme="light"] {
+                --bg: #f0f0e8;
+                --fg: #1a1a18;
+                --blue: #5ba3d0;
+                --blue-dark: #1d5a8a;
+                --blue-pale: #c5dff0;
+                --accent: #d04a20;
+                --gray: #888880;
+                --card-bg: #ffffff;
+                --ci-logo-bg: #ffffff;
+                --ci-logo-filter: none;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                background: var(--bg);
+                color: var(--fg);
+                font-family: "Share Tech Mono", monospace;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                overflow-x: hidden;
+                overflow-y: auto;
+                position: relative;
+                transition:
+                    background 0.25s,
+                    color 0.25s;
+            }
+
+            /* pixel grid background */
+            body::before {
+                content: "";
+                position: fixed;
+                inset: 0;
+                background-image:
+                    linear-gradient(
+                        rgba(91, 163, 208, 0.07) 1px,
+                        transparent 1px
+                    ),
+                    linear-gradient(
+                        90deg,
+                        rgba(91, 163, 208, 0.07) 1px,
+                        transparent 1px
+                    );
+                background-size: 8px 8px;
+                pointer-events: none;
+                z-index: 0;
+            }
+
+            /* blurry highway scan — mimics the cover */
+            .highway {
+                position: fixed;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 600px;
+                height: 340px;
+                pointer-events: none;
+                z-index: 0;
+                opacity: 0.13;
+                animation: highway-pulse 6s ease-in-out infinite;
+            }
+
+            .highway svg {
+                width: 100%;
+                height: 100%;
+            }
+
+            /* ghost figure left */
+            .ghost {
+                position: fixed;
+                left: 8%;
+                top: 20%;
+                width: 48px;
+                height: 110px;
+                opacity: 0.18;
+                pointer-events: none;
+                z-index: 0;
+                image-rendering: pixelated;
+                animation: ghost-float 9s ease-in-out infinite;
+            }
+
+            .container {
+                position: relative;
+                z-index: 1;
+                width: 100%;
+                max-width: 960px;
+                padding: 2.5rem 2rem;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 2.5rem;
+            }
+
+            /* header */
+            .header {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+                gap: 1px;
+            }
+
+            .header-logo {
+                width: 84px;
+                height: 84px;
+                image-rendering: pixelated;
+                margin-top: 5px;
+            }
+
+            .title {
+                font-family: "VT323", monospace;
+                font-size: 5rem;
+                line-height: 1;
+                color: var(--fg);
+                letter-spacing: 0.04em;
+                text-shadow:
+                    4px 0 0 var(--blue),
+                    0 4px 0 var(--blue-pale);
+            }
+
+            .subtitle {
+                font-size: 0.78rem;
+                letter-spacing: 0.2em;
+                color: var(--gray);
+                text-transform: uppercase;
+                margin-top: 4px;
+            }
+
+            .searchbar {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .search-controls {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .search-label {
+                font-size: 0.58rem;
+                letter-spacing: 0.18em;
+                color: var(--gray);
+                text-transform: uppercase;
+            }
+
+            .search-input {
+                width: 100%;
+                border: 2px solid var(--fg);
+                background: var(--card-bg);
+                color: var(--fg);
+                box-shadow: 4px 4px 0 var(--fg);
+                padding: 10px 12px;
+                font: inherit;
+                font-size: 0.74rem;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                outline: none;
+                transition:
+                    background 0.25s,
+                    color 0.25s,
+                    border-color 0.25s,
+                    box-shadow 0.08s,
+                    transform 0.08s;
+            }
+
+            .search-input::placeholder {
+                color: var(--gray);
+                opacity: 1;
+            }
+
+            .search-input:focus {
+                transform: translate(-2px, -2px);
+                box-shadow: 6px 6px 0 var(--fg);
+            }
+
+            .tag-filters {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .tag-filter-button {
+                border: 2px solid var(--fg);
+                background: var(--card-bg);
+                color: var(--fg);
+                box-shadow: 4px 4px 0 var(--fg);
+                padding: 7px 10px 6px;
+                font: inherit;
+                font-size: 0.62rem;
+                letter-spacing: 0.12em;
+                cursor: pointer;
+                transition:
+                    transform 0.08s,
+                    box-shadow 0.08s,
+                    background 0.25s,
+                    color 0.25s,
+                    border-color 0.25s;
+            }
+
+            .tag-filter-button:hover {
+                transform: translate(-2px, -2px);
+                box-shadow: 6px 6px 0 var(--fg);
+            }
+
+            .tag-filter-button.is-active {
+                background: var(--blue-pale);
+                color: var(--blue-dark);
+                border-color: var(--blue);
+            }
+
+            /* services grid */
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 12px;
+                width: 100%;
+            }
+
+            .card {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                padding: 20px 18px 17px;
+                background: var(--card-bg);
+                border: 2px solid var(--fg);
+                box-shadow: 4px 4px 0 var(--fg);
+                cursor: pointer;
+                text-decoration: none;
+                color: inherit;
+                transition:
+                    transform 0.08s,
+                    box-shadow 0.08s,
+                    background 0.25s,
+                    border-color 0.25s;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: var(--blue);
+            }
+
+            .card:hover {
+                transform: translate(-2px, -2px);
+                box-shadow: 6px 6px 0 var(--fg);
+            }
+
+            .card:active {
+                transform: translate(2px, 2px);
+                box-shadow: 2px 2px 0 var(--fg);
+            }
+
+            .card-icon {
+                width: 38px;
+                height: 38px;
+                image-rendering: pixelated;
+            }
+
+            .card-icon--ci {
+                image-rendering: auto;
+            }
+
+            .card-icon--cover {
+                image-rendering: auto;
+                object-fit: contain;
+            }
+
+            .card--feature {
+                grid-column: 1 / -1;
+                display: grid;
+                grid-template-columns: 104px minmax(0, 1fr);
+                align-items: center;
+                gap: 14px;
+                min-height: 132px;
+            }
+
+            .card--feature .card-icon {
+                width: 104px;
+                height: 78px;
+                align-self: stretch;
+            }
+
+            .card-copy {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                min-width: 0;
+            }
+
+            .card--feature .card-copy {
+                position: relative;
+                z-index: 1;
+                align-self: center;
+            }
+
+            .card-name {
+                font-family: "VT323", monospace;
+                font-size: 1.75rem;
+                line-height: 1;
+                color: var(--fg);
+            }
+
+            .card-desc {
+                font-size: 0.68rem;
+                color: var(--gray);
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                line-height: 1.4;
+            }
+
+            .card-tag {
+                position: absolute;
+                top: 7px;
+                right: 9px;
+                font-size: 0.58rem;
+                letter-spacing: 0.15em;
+                color: var(--blue-dark);
+                background: var(--blue-pale);
+                padding: 2px 5px;
+                border: 1px solid var(--blue);
+            }
+
+            .card--wide {
+                grid-column: 1 / -1;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 16px 18px 15px;
+                cursor: default;
+                background: linear-gradient(
+                    180deg,
+                    rgba(91, 163, 208, 0.14) 0%,
+                    var(--card-bg) 100%
+                );
+            }
+
+            .card--wide:hover,
+            .card--wide:active {
+                transform: none;
+                box-shadow: 4px 4px 0 var(--fg);
+            }
+
+            .card--ci::before {
+                height: 4px;
+                background: linear-gradient(
+                    90deg,
+                    #f1f1ee 0%,
+                    #bdbdb7 26%,
+                    #7f827d 58%,
+                    #3a3c39 100%
+                );
+            }
+
+            .card--ci {
+                background:
+                    linear-gradient(
+                        180deg,
+                        rgba(28, 29, 30, 0.04) 0%,
+                        rgba(98, 101, 104, 0.08) 100%
+                    ),
+                    var(--card-bg);
+            }
+
+            .card--ci .card-tag {
+                color: #2f3438;
+                background: #e8e9e5;
+                border-color: #9ca19d;
+            }
+
+            .card--ci .card-icon--ci {
+                object-fit: contain;
+                background: var(--ci-logo-bg);
+                border: 0;
+                filter: var(--ci-logo-filter);
+            }
+
+            .card--ci .card-name {
+                color: var(--fg);
+            }
+
+            .card--ci .card-desc {
+                max-width: 20rem;
+            }
+
+            /* status bar */
+            .statusbar {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                font-size: 0.65rem;
+                letter-spacing: 0.15em;
+                color: var(--gray);
+                border-top: 1px solid rgba(0, 0, 0, 0.12);
+                padding-top: 12px;
+            }
+
+            .status-dot {
+                display: inline-block;
+                width: 7px;
+                height: 7px;
+                background: #4caf50;
+                margin-right: 6px;
+                animation: blink 2.5s ease-in-out infinite;
+            }
+
+            @keyframes blink {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.2;
+                }
+            }
+
+            /* X mark — echoing the cover */
+            .xmark {
+                position: fixed;
+                right: 28px;
+                bottom: 80px;
+                width: 36px;
+                height: 36px;
+                opacity: 0.2;
+                z-index: 0;
+            }
+
+            /* scanbeam sweep */
+            .scanbeam {
+                position: fixed;
+                left: 0;
+                right: 0;
+                height: 90px;
+                background: linear-gradient(
+                    to bottom,
+                    transparent 0%,
+                    rgba(91, 163, 208, 0.055) 50%,
+                    transparent 100%
+                );
+                pointer-events: none;
+                z-index: 0;
+                animation: scan-sweep 8s linear infinite;
+            }
+
+            @keyframes scan-sweep {
+                0% {
+                    top: -90px;
+                }
+                100% {
+                    top: 100vh;
+                }
+            }
+
+            @keyframes ghost-float {
+                0%,
+                100% {
+                    transform: translateY(0px);
+                }
+                50% {
+                    transform: translateY(-16px);
+                }
+            }
+
+            @keyframes highway-pulse {
+                0%,
+                100% {
+                    opacity: 0.13;
+                }
+                50% {
+                    opacity: 0.07;
+                }
+            }
+
+            /* ghost figures 2 & 3 */
+            .ghost-2 {
+                position: fixed;
+                right: 10%;
+                top: 28%;
+                width: 38px;
+                height: 92px;
+                opacity: 0.12;
+                pointer-events: none;
+                z-index: 0;
+                image-rendering: pixelated;
+                animation: ghost-float 11s ease-in-out infinite;
+                animation-delay: -4s;
+            }
+
+            .ghost-3 {
+                position: fixed;
+                left: 24%;
+                bottom: 20%;
+                width: 24px;
+                height: 56px;
+                opacity: 0.09;
+                pointer-events: none;
+                z-index: 0;
+                image-rendering: pixelated;
+                animation: ghost-float 13s ease-in-out infinite;
+                animation-delay: -8s;
+            }
+
+            /* power lines */
+            .powerlines {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 80px;
+                pointer-events: none;
+                z-index: 0;
+                opacity: 0.11;
+            }
+
+            /* pixel sneaker */
+            .sneaker {
+                position: fixed;
+                right: 18px;
+                bottom: 100px;
+                width: 68px;
+                height: 42px;
+                pointer-events: none;
+                z-index: 0;
+                opacity: 0.55;
+                image-rendering: pixelated;
+            }
+
+            /* track title watermarks */
+            .tracktitle {
+                position: fixed;
+                font-family: "VT323", monospace;
+                font-size: 0.82rem;
+                letter-spacing: 0.22em;
+                color: var(--blue-dark);
+                opacity: 0.065;
+                pointer-events: none;
+                z-index: 0;
+                white-space: nowrap;
+                text-transform: uppercase;
+            }
+
+            /* disabled card */
+            .card--disabled {
+                opacity: 0.38;
+                cursor: not-allowed;
+                pointer-events: none;
+                filter: grayscale(40%);
+            }
+
+            .is-hidden {
+                display: none !important;
+            }
+
+            .contact {
+                width: 100%;
+                text-align: center;
+                font-size: 0.62rem;
+                letter-spacing: 0.18em;
+                color: var(--gray);
+                text-transform: uppercase;
+            }
+
+            .contact a {
+                color: var(--blue-dark);
+                text-decoration: none;
+            }
+
+            .contact a:hover {
+                color: var(--blue);
+            }
+
+            /* theme toggle button */
+            .theme-toggle {
+                position: fixed;
+                top: 28px;
+                left: 32px;
+                font-family: "Share Tech Mono", monospace;
+                font-size: 0.6rem;
+                letter-spacing: 0.12em;
+                color: var(--fg);
+                border: 2px solid var(--fg);
+                padding: 5px 9px;
+                background: var(--card-bg);
+                box-shadow: 3px 3px 0 var(--fg);
+                text-transform: uppercase;
+                z-index: 2;
+                opacity: 0.7;
+                cursor: pointer;
+                user-select: none;
+                transition:
+                    opacity 0.1s,
+                    background 0.25s,
+                    color 0.25s,
+                    border-color 0.25s,
+                    box-shadow 0.25s;
+            }
+
+            .theme-toggle:hover {
+                opacity: 1;
+            }
+
+            /* play/pause button - right top corner */
+            .audio-toggle {
+                position: fixed;
+                top: 28px;
+                right: 32px;
+                font-family: "Share Tech Mono", monospace;
+                font-size: 0.6rem;
+                letter-spacing: 0.12em;
+                color: var(--fg);
+                border: 2px solid var(--fg);
+                padding: 5px 9px;
+                background: var(--card-bg);
+                box-shadow: 3px 3px 0 var(--fg);
+                text-transform: uppercase;
+                z-index: 2;
+                opacity: 0.7;
+                cursor: pointer;
+                user-select: none;
+                transition:
+                    opacity 0.1s,
+                    background 0.25s,
+                    color 0.25s,
+                    border-color 0.25s,
+                    box-shadow 0.25s;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .audio-toggle:hover {
+                opacity: 1;
+            }
+
+            .audio-toggle svg {
+                width: 14px;
+                height: 14px;
+                fill: var(--fg);
+                image-rendering: pixelated;
+            }
+
+            .audio-toggle.playing {
+                background: var(--blue-pale);
+                border-color: var(--blue);
+            }
+
+            .audio-toggle.playing svg {
+                fill: var(--blue-dark);
+            }
+
+            @media (max-width: 640px) {
+                body {
+                    justify-content: flex-start;
+                    overflow-x: hidden;
+                    overflow-y: auto;
+                }
+
+                .container {
+                    max-width: 100%;
+                    padding: 6.5rem 1rem 2rem;
+                    gap: 1.75rem;
+                }
+
+                .title {
+                    font-size: 3.9rem;
+                }
+
+                .grid {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                    gap: 9px;
+                }
+
+                .searchbar {
+                    gap: 6px;
+                }
+
+                .search-controls {
+                    gap: 8px;
+                }
+
+                .search-label {
+                    font-size: 0.5rem;
+                    letter-spacing: 0.14em;
+                }
+
+                .search-input {
+                    padding: 8px 9px;
+                    box-shadow: 3px 3px 0 var(--fg);
+                    font-size: 0.62rem;
+                }
+
+                .search-input:focus {
+                    box-shadow: 4px 4px 0 var(--fg);
+                }
+
+                .tag-filters {
+                    gap: 6px;
+                }
+
+                .tag-filter-button {
+                    padding: 6px 8px 5px;
+                    box-shadow: 3px 3px 0 var(--fg);
+                    font-size: 0.52rem;
+                    letter-spacing: 0.1em;
+                }
+
+                .tag-filter-button:hover {
+                    box-shadow: 4px 4px 0 var(--fg);
+                }
+
+                .card {
+                    gap: 6px;
+                    padding: 14px 11px 12px;
+                    box-shadow: 3px 3px 0 var(--fg);
+                }
+
+                .card:hover {
+                    box-shadow: 4px 4px 0 var(--fg);
+                }
+
+                .card-icon {
+                    width: 30px;
+                    height: 30px;
+                }
+
+                .card-tag {
+                    top: 5px;
+                    right: 6px;
+                    font-size: 0.5rem;
+                    letter-spacing: 0.12em;
+                    padding: 1px 4px;
+                }
+
+                .card-name {
+                    font-size: 1.42rem;
+                }
+
+                .card-desc {
+                    font-size: 0.56rem;
+                    letter-spacing: 0.06em;
+                }
+
+                .card--feature {
+                    grid-column: 1 / -1;
+                    grid-template-columns: 76px minmax(0, 1fr);
+                    gap: 10px;
+                    min-height: 0;
+                }
+
+                .card--feature .card-icon {
+                    width: 76px;
+                    height: 58px;
+                }
+
+                .card-copy {
+                    gap: 5px;
+                }
+
+                .card--wide {
+                    grid-column: 1 / -1;
+                    padding: 12px 11px 11px;
+                }
+
+                .theme-toggle,
+                .audio-toggle {
+                    top: 14px;
+                    padding: 5px 7px;
+                    box-shadow: 2px 2px 0 var(--fg);
+                }
+
+                .theme-toggle {
+                    left: 14px;
+                }
+
+                .audio-toggle {
+                    right: 14px;
+                    gap: 4px;
+                }
+
+                .audio-label {
+                    display: none;
+                }
+            }
+
+            /* scan line overlay */
+            body::after {
+                content: "";
+                position: fixed;
+                inset: 0;
+                background: repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 3px,
+                    rgba(0, 0, 0, 0.018) 3px,
+                    rgba(0, 0, 0, 0.018) 4px
+                );
+                pointer-events: none;
+                z-index: 10;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- scanbeam -->
+        <div class="scanbeam"></div>
+
+        <!-- theme toggle -->
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            ◐ DARK
+        </button>
+
+        <!-- audio play/pause button -->
+        <button
+            class="audio-toggle"
+            id="audioToggle"
+            aria-label="Play/Pause audio"
+        >
+            <svg
+                class="play-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                height="18"
+                viewBox="0 0 24 24"
+                width="18"
+            >
+                <path d="M8 5v14l11-7z" />
+            </svg>
+            <svg
+                class="pause-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                height="18"
+                viewBox="0 0 24 24"
+                width="18"
+                display="none"
+            >
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+            </svg>
+
+            <span class="audio-label">PLAY</span>
+        </button>
+
+        <!-- audio element - replace src with your audio file -->
+        <audio id="bgAudio" loop>
+            <source src="./audio.mp3" type="audio/mpeg" />
+            Your browser does not support the audio element.
+        </audio>
+
+        <!-- faint highway -->
+        <div class="highway">
+            <svg viewBox="0 0 600 340" xmlns="http://www.w3.org/2000/svg">
+                <!-- road perspective lines -->
+                <line
+                    x1="300"
+                    y1="0"
+                    x2="50"
+                    y2="340"
+                    stroke="#1a1a18"
+                    stroke-width="1.5"
+                    opacity="0.6"
+                />
+                <line
+                    x1="300"
+                    y1="0"
+                    x2="550"
+                    y2="340"
+                    stroke="#1a1a18"
+                    stroke-width="1.5"
+                    opacity="0.6"
+                />
+                <line
+                    x1="300"
+                    y1="0"
+                    x2="140"
+                    y2="340"
+                    stroke="#1a1a18"
+                    stroke-width="0.8"
+                    opacity="0.4"
+                />
+                <line
+                    x1="300"
+                    y1="0"
+                    x2="460"
+                    y2="340"
+                    stroke="#1a1a18"
+                    stroke-width="0.8"
+                    opacity="0.4"
+                />
+                <line
+                    x1="300"
+                    y1="0"
+                    x2="220"
+                    y2="340"
+                    stroke="#1a1a18"
+                    stroke-width="0.5"
+                    opacity="0.3"
+                />
+                <line
+                    x1="300"
+                    y1="0"
+                    x2="380"
+                    y2="340"
+                    stroke="#1a1a18"
+                    stroke-width="0.5"
+                    opacity="0.3"
+                />
+                <!-- interchange arc -->
+                <path
+                    d="M 80 340 Q 180 220 300 180 Q 420 140 500 60"
+                    fill="none"
+                    stroke="#5ba3d0"
+                    stroke-width="2"
+                    opacity="0.5"
+                />
+                <path
+                    d="M 120 340 Q 210 230 300 195 Q 390 160 480 80"
+                    fill="none"
+                    stroke="#5ba3d0"
+                    stroke-width="1"
+                    opacity="0.3"
+                />
+                <!-- pixel cars -->
+                <rect
+                    x="182"
+                    y="284"
+                    width="24"
+                    height="12"
+                    fill="#888880"
+                    opacity="0.7"
+                />
+                <rect
+                    x="186"
+                    y="286"
+                    width="16"
+                    height="6"
+                    fill="#aaaaaa"
+                    opacity="0.5"
+                />
+                <rect
+                    x="321"
+                    y="264"
+                    width="20"
+                    height="10"
+                    fill="#5ba3d0"
+                    opacity="0.7"
+                />
+                <rect
+                    x="325"
+                    y="266"
+                    width="12"
+                    height="5"
+                    fill="#c5dff0"
+                    opacity="0.5"
+                />
+                <rect
+                    x="394"
+                    y="302"
+                    width="18"
+                    height="9"
+                    fill="#d04a20"
+                    opacity="0.7"
+                />
+                <rect
+                    x="254"
+                    y="246"
+                    width="16"
+                    height="8"
+                    fill="#888880"
+                    opacity="0.6"
+                />
+                <rect
+                    x="112"
+                    y="316"
+                    width="20"
+                    height="10"
+                    fill="#1a1a18"
+                    opacity="0.5"
+                />
+            </svg>
+        </div>
+
+        <!-- ghost figure pixel art -->
+        <svg
+            class="ghost"
+            viewBox="0 0 12 28"
+            xmlns="http://www.w3.org/2000/svg"
+            style="image-rendering: pixelated"
+        >
+            <rect x="3" y="0" width="6" height="6" fill="#5ba3d0" />
+            <rect x="2" y="6" width="8" height="12" fill="#5ba3d0" />
+            <rect x="1" y="18" width="4" height="10" fill="#5ba3d0" />
+            <rect x="7" y="18" width="4" height="10" fill="#5ba3d0" />
+        </svg>
+
+        <!-- ghost figure 2 — walking pose, right side -->
+        <svg
+            class="ghost-2"
+            viewBox="0 0 12 28"
+            xmlns="http://www.w3.org/2000/svg"
+            style="image-rendering: pixelated"
+        >
+            <rect x="3" y="0" width="6" height="6" fill="#5ba3d0" />
+            <rect x="2" y="6" width="8" height="10" fill="#5ba3d0" />
+            <rect x="0" y="8" width="3" height="6" fill="#5ba3d0" />
+            <rect x="9" y="9" width="3" height="5" fill="#5ba3d0" />
+            <rect x="2" y="16" width="3" height="12" fill="#5ba3d0" />
+            <rect x="7" y="16" width="3" height="10" fill="#5ba3d0" />
+        </svg>
+
+        <!-- ghost figure 3 — distant/small -->
+        <svg
+            class="ghost-3"
+            viewBox="0 0 10 22"
+            xmlns="http://www.w3.org/2000/svg"
+            style="image-rendering: pixelated"
+        >
+            <rect x="3" y="0" width="4" height="4" fill="#5ba3d0" />
+            <rect x="2" y="4" width="6" height="9" fill="#5ba3d0" />
+            <rect x="2" y="13" width="2" height="9" fill="#5ba3d0" />
+            <rect x="6" y="13" width="2" height="7" fill="#5ba3d0" />
+        </svg>
+
+        <!-- power lines across top -->
+        <svg
+            class="powerlines"
+            viewBox="0 0 1200 80"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="none"
+        >
+            <line
+                x1="90"
+                y1="0"
+                x2="90"
+                y2="80"
+                stroke="#1a1a18"
+                stroke-width="2.5"
+            />
+            <line
+                x1="295"
+                y1="0"
+                x2="295"
+                y2="80"
+                stroke="#1a1a18"
+                stroke-width="2.5"
+            />
+            <line
+                x1="530"
+                y1="0"
+                x2="530"
+                y2="80"
+                stroke="#1a1a18"
+                stroke-width="2.5"
+            />
+            <line
+                x1="760"
+                y1="0"
+                x2="760"
+                y2="80"
+                stroke="#1a1a18"
+                stroke-width="2.5"
+            />
+            <line
+                x1="970"
+                y1="0"
+                x2="970"
+                y2="80"
+                stroke="#1a1a18"
+                stroke-width="2.5"
+            />
+            <line
+                x1="0"
+                y1="18"
+                x2="1200"
+                y2="20"
+                stroke="#1a1a18"
+                stroke-width="1"
+            />
+            <line
+                x1="0"
+                y1="33"
+                x2="1200"
+                y2="35"
+                stroke="#1a1a18"
+                stroke-width="0.8"
+            />
+            <line
+                x1="0"
+                y1="48"
+                x2="1200"
+                y2="50"
+                stroke="#1a1a18"
+                stroke-width="0.8"
+            />
+        </svg>
+
+        <!-- pixel sneaker — nod to the cover's bottom-right corner -->
+        <svg
+            class="sneaker"
+            viewBox="0 0 52 30"
+            xmlns="http://www.w3.org/2000/svg"
+            style="image-rendering: pixelated"
+        >
+            <rect x="2" y="24" width="48" height="4" fill="#1a1a18" />
+            <rect x="2" y="20" width="48" height="6" fill="white" />
+            <rect x="6" y="12" width="38" height="10" fill="#d04a20" />
+            <rect x="6" y="8" width="14" height="6" fill="#d04a20" />
+            <rect x="16" y="6" width="10" height="8" fill="white" />
+            <rect x="24" y="10" width="20" height="4" fill="#5ba3d0" />
+            <rect x="40" y="8" width="8" height="12" fill="#d04a20" />
+            <rect x="17" y="8" width="8" height="1" fill="#888880" />
+            <rect x="17" y="10" width="8" height="1" fill="#888880" />
+            <rect x="17" y="12" width="8" height="1" fill="#888880" />
+        </svg>
+
+        <!-- track title watermarks -->
+        <div
+            class="tracktitle"
+            style="left: 3%; top: 44%; transform: rotate(-12deg)"
+        >
+            KARMA POLICE
+        </div>
+        <div
+            class="tracktitle"
+            style="left: 4%; bottom: 24%; transform: rotate(7deg)"
+        >
+            PARANOID ANDROID
+        </div>
+        <div
+            class="tracktitle"
+            style="right: 4%; top: 16%; transform: rotate(-17deg)"
+        >
+            FITTER HAPPIER
+        </div>
+        <div
+            class="tracktitle"
+            style="right: 3%; top: 52%; transform: rotate(11deg)"
+        >
+            NO SURPRISES
+        </div>
+        <div
+            class="tracktitle"
+            style="left: 28%; top: 7%; transform: rotate(-5deg)"
+        >
+            EXIT MUSIC
+        </div>
+        <div
+            class="tracktitle"
+            style="right: 14%; bottom: 30%; transform: rotate(-9deg)"
+        >
+            LET DOWN
+        </div>
+        <div
+            class="tracktitle"
+            style="left: 8%; top: 7%; transform: rotate(8deg)"
+        >
+            AIRBAG
+        </div>
+
+        <!-- X mark pixel -->
+        <svg
+            class="xmark"
+            viewBox="0 0 36 36"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <line
+                x1="4"
+                y1="4"
+                x2="32"
+                y2="32"
+                stroke="#1a1a18"
+                stroke-width="5"
+                stroke-linecap="square"
+            />
+            <line
+                x1="32"
+                y1="4"
+                x2="4"
+                y2="32"
+                stroke="#1a1a18"
+                stroke-width="5"
+                stroke-linecap="square"
+            />
+        </svg>
+
+        <div class="container">
+            <div class="header">
+                <img
+                    src="./images/favicon.png"
+                    class="header-logo"
+                    alt="okcomp"
+                />
+
+                <div class="title">okcomp</div>
+
+                <div class="subtitle">self-hosted services and archives</div>
+            </div>
+
+            <div class="searchbar">
+                <label class="search-label" for="serviceSearch"
+                    >Search Services</label
+                >
+                <div class="search-controls">
+                    <input
+                        class="search-input"
+                        id="serviceSearch"
+                        type="search"
+                        placeholder="search by name, tag, or description"
+                        autocomplete="off"
+                        spellcheck="false"
+                    />
+                    <div class="tag-filters" id="tagFilters"></div>
+                </div>
+            </div>
+
+            <div class="grid">
+                <a class="card" href="https://nr.okcomp.ir">
+                    <div class="card-tag">MUSIC</div>
+                    <!-- pixel music icon -->
+                    <svg
+                        class="card-icon"
+                        viewBox="0 0 28 28"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style="image-rendering: pixelated"
+                    >
+                        <rect
+                            x="4"
+                            y="8"
+                            width="4"
+                            height="12"
+                            fill="#5ba3d0"
+                        />
+                        <rect
+                            x="10"
+                            y="4"
+                            width="4"
+                            height="16"
+                            fill="#5ba3d0"
+                        />
+                        <rect
+                            x="16"
+                            y="10"
+                            width="4"
+                            height="10"
+                            fill="#5ba3d0"
+                        />
+                        <rect
+                            x="22"
+                            y="6"
+                            width="4"
+                            height="14"
+                            fill="#5ba3d0"
+                        />
+                    </svg>
+                    <div class="card-name">Navidrome</div>
+                    <div class="card-desc">
+                        music streaming<br />subsonic api
+                    </div>
+                </a>
+
+                <a class="card" href="https://cp.okcomp.ir">
+                    <div class="card-tag">FILES</div>
+                    <svg
+                        class="card-icon"
+                        viewBox="0 0 28 28"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style="image-rendering: pixelated"
+                    >
+                        <rect
+                            x="2"
+                            y="8"
+                            width="24"
+                            height="16"
+                            fill="#5ba3d0"
+                        />
+                        <rect
+                            x="2"
+                            y="6"
+                            width="10"
+                            height="4"
+                            fill="#1d5a8a"
+                        />
+                        <rect
+                            x="4"
+                            y="12"
+                            width="20"
+                            height="2"
+                            fill="#c5dff0"
+                        />
+                        <rect
+                            x="4"
+                            y="16"
+                            width="14"
+                            height="2"
+                            fill="#c5dff0"
+                        />
+                        <rect
+                            x="4"
+                            y="20"
+                            width="17"
+                            height="2"
+                            fill="#c5dff0"
+                        />
+                    </svg>
+                    <div class="card-name">Copyparty</div>
+                    <div class="card-desc">
+                        file hosting<br />upload &amp; share
+                    </div>
+                </a>
+                <a class="card" href="https://paste.okcomp.ir">
+                    <div class="card-tag">TOOLS</div>
+                    <img
+                        class="card-icon card-icon--cover"
+                        src="./images/microbin.png"
+                        alt="MicroBin logo"
+                        loading="lazy"
+                        decoding="async"
+                    />
+                    <div class="card-name">Pastebin</div>
+                    <div class="card-desc">
+                        text snippets &amp; notes<br />microbin instance
+                    </div>
+                </a>
+                <a class="card" href="https://chess.okcomp.ir">
+                    <div class="card-tag">GAME</div>
+                    <svg
+                        class="card-icon"
+                        viewBox="0 0 28 28"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style="image-rendering: pixelated"
+                    >
+                        <rect
+                            x="2"
+                            y="2"
+                            width="24"
+                            height="24"
+                            fill="#6b4c3b"
+                        />
+                        <rect x="6" y="6" width="2" height="2" fill="#ffffff" />
+                        <rect
+                            x="12"
+                            y="6"
+                            width="2"
+                            height="2"
+                            fill="#ffffff"
+                        />
+                        <rect
+                            x="18"
+                            y="6"
+                            width="2"
+                            height="2"
+                            fill="#ffffff"
+                        />
+                        <rect
+                            x="6"
+                            y="12"
+                            width="2"
+                            height="2"
+                            fill="#ffffff"
+                        />
+                        <rect
+                            x="12"
+                            y="12"
+                            width="2"
+                            height="2"
+                            fill="#ffffff"
+                        />
+                        <rect
+                            x="18"
+                            y="12"
+                            width="2"
+                            height="2"
+                            fill="#ffffff"
+                        />
+                        <rect
+                            x="6"
+                            y="18"
+                            width="2"
+                            height="2"
+                            fill="#ffffff"
+                        />
+                        <rect
+                            x="12"
+                            y="18"
+                            width="2"
+                            height="2"
+                            fill="#ffffff"
+                        />
+                        <rect
+                            x="18"
+                            y="18"
+                            width="2"
+                            height="2"
+                            fill="#ffffff"
+                        />
+                    </svg>
+
+                    <div class="card-name">Chess</div>
+
+                    <div class="card-desc">play & share<br />online chess</div>
+                </a>
+                <a class="card" href="https://hp.okcomp.ir">
+                    <div class="card-tag">ARTIST</div>
+                    <svg
+                        class="card-icon"
+                        viewBox="0 0 28 28"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style="image-rendering: pixelated"
+                    >
+                        <defs>
+                            <linearGradient
+                                id="hp-card-bg"
+                                x1="0%"
+                                y1="0%"
+                                x2="100%"
+                                y2="0%"
+                            >
+                                <stop offset="0%" stop-color="#7be4ff" />
+                                <stop offset="42%" stop-color="#1a8ec1" />
+                                <stop offset="58%" stop-color="#10253b" />
+                                <stop offset="100%" stop-color="#09090d" />
+                            </linearGradient>
+                            <linearGradient
+                                id="hp-card-glow"
+                                x1="0%"
+                                y1="0%"
+                                x2="0%"
+                                y2="100%"
+                            >
+                                <stop offset="0%" stop-color="#d7f8ff" />
+                                <stop offset="100%" stop-color="#56c8ee" />
+                            </linearGradient>
+                        </defs>
+                        <rect
+                            x="2"
+                            y="2"
+                            width="24"
+                            height="24"
+                            rx="2"
+                            fill="url(#hp-card-bg)"
+                        />
+                        <path
+                            d="M2 2H13.5C12 8 11.8 17.5 12.3 26H2Z"
+                            fill="url(#hp-card-glow)"
+                            opacity="0.85"
+                        />
+                        <path d="M13 2H15.8L14.2 26H12.8Z" fill="#123a56" />
+                        <path
+                            d="M10.4 5.2C9.8 9.4 9.4 14.7 9.1 26"
+                            stroke="#07131f"
+                            stroke-width="1.1"
+                            stroke-linecap="round"
+                        />
+                        <path
+                            d="M8.6 5.7 10.4 5l-1.4-1.8M10.4 5l1.9-1.2M10.4 5l-2.2.6M10.4 5l2.2.8M10.4 5l-1 2.1M10.4 5l1.3 2.1"
+                            stroke="#07131f"
+                            stroke-width="0.8"
+                            stroke-linecap="round"
+                        />
+                        <path
+                            d="M6.6 19.3C6.3 21.3 6.2 23.2 6.1 26"
+                            stroke="#09141f"
+                            stroke-width="0.9"
+                            stroke-linecap="round"
+                        />
+                        <path
+                            d="M5.4 19.6 6.6 19.2l-1-1.2M6.6 19.2l1.2-.8M6.6 19.2l-1.4.3M6.6 19.2l1.5.5M6.6 19.2l-.8 1.5M6.6 19.2l1 1.4"
+                            stroke="#09141f"
+                            stroke-width="0.6"
+                            stroke-linecap="round"
+                        />
+                        <path
+                            d="M11.8 21.1C11.6 22.4 11.5 23.7 11.4 26"
+                            stroke="#0a1622"
+                            stroke-width="0.8"
+                            stroke-linecap="round"
+                        />
+                        <path
+                            d="M10.8 21.2 11.8 21l-.8-1M11.8 21l1-.7M11.8 21l-1.2.3M11.8 21l1.2.4M11.8 21l-.6 1.2M11.8 21l.8 1.1"
+                            stroke="#0a1622"
+                            stroke-width="0.55"
+                            stroke-linecap="round"
+                        />
+                        <path
+                            d="M13.5 12.5c1.1-1.2 2-1.8 3-1.8m-1.6-.5v5.6m2.3-4.4v4.4m0-2.3c.4-.8 1-1.2 1.6-1.2m1.1-.6v4.8m0-2.5c.4-.7 1-1.1 1.5-1.1"
+                            stroke="#f5f9ff"
+                            stroke-width="0.7"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            fill="none"
+                        />
+                        <path
+                            d="M18.4 19.1v4.8m0-1.8c.6-.7 1.1-.9 1.7-.6.5.2.7.8.7 1.7m1.6-4.1v4.8m0-1.8c.6-.7 1.1-.9 1.7-.6.4.2.7.8.7 1.7"
+                            stroke="#ffffff"
+                            stroke-width="0.7"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            fill="none"
+                        />
+                    </svg>
+                    <div class="card-name">Hadi Pakzad</div>
+                    <div class="card-desc">
+                        music, photos &amp; archive<br />mirror of
+                        djaf.ir/hadipakzad
+                    </div>
+                </a>
+                <a class="card" href="https://factorio.okcomp.ir/">
+                    <div class="card-tag">TOOLS</div>
+                    <img
+                        class="card-icon card-icon--cover"
+                        src="./images/factorio.png"
+                        width="86"
+                        height="86"
+                        alt="Factorio logo"
+                        loading="lazy"
+                        decoding="async"
+                    />
+                    <div class="card-name">Factorio Toolkit</div>
+                    <div class="card-desc">
+                        factorio video game tools, lab, calc and cheatsheets
+                    </div>
+                </a>
+                <a class="card" href="https://feishin.okcomp.ir/">
+                    <div class="card-tag">MUSIC</div>
+                    <img
+                        class="card-icon card-icon--cover"
+                        src="./images/feinshin.png"
+                        alt="Feishin logo"
+                        loading="lazy"
+                        decoding="async"
+                    />
+                    <div class="card-name">Feishin</div>
+                    <div class="card-desc">
+                        desktop-style music player<br />for subsonic servers
+                    </div>
+                </a>
+                <a class="card card--ci" href="https://ci.okcomp.ir">
+                    <div class="card-tag">ARTIST</div>
+                    <img
+                        class="card-icon card-icon--ci"
+                        src="./images/ci.svg"
+                        alt="Citizen Insane logo"
+                        loading="lazy"
+                        decoding="async"
+                    />
+                    <div class="card-copy">
+                        <div class="card-name">Citizen Insane</div>
+                        <div class="card-desc">
+                            radiohead stories, posters and lyrics<br />mirror of
+                            citizeninsane.eu
+                        </div>
+                    </div>
+                </a>
+                <div
+                    class="card card--wide card--disabled is-hidden"
+                    id="searchEmpty"
+                >
+                    <div class="card-name">No Matches</div>
+                </div>
+            </div>
+
+            <div class="contact">
+                contact &nbsp;/&nbsp;
+                <a href="mailto:ok@okcomp.ir">ok@okcomp.ir</a>
+            </div>
+
+            <div class="statusbar">
+                <span
+                    ><span class="status-dot"></span>all systems
+                    operational</span
+                >
+
+                <span>okcomp</span>
+            </div>
+        </div>
+        <script>
+            (function () {
+                const canvas = document.createElement("canvas");
+                canvas.style.cssText =
+                    "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;";
+                document.body.prepend(canvas);
+                const ctx = canvas.getContext("2d");
+                let W, H;
+
+                function resize() {
+                    W = canvas.width = window.innerWidth;
+                    H = canvas.height = window.innerHeight;
+                }
+                resize();
+                window.addEventListener("resize", resize);
+
+                const COLORS = [
+                    "#5ba3d0",
+                    "#5ba3d0",
+                    "#5ba3d0",
+                    "#c5dff0",
+                    "#1d5a8a",
+                    "#d04a20",
+                ];
+                const SZ = 4;
+                const COUNT = 38;
+
+                const pts = Array.from({ length: COUNT }, () => ({
+                    x: Math.random() * window.innerWidth,
+                    y: Math.random() * window.innerHeight,
+                    size: SZ * (Math.floor(Math.random() * 2) + 1),
+                    speed: 0.22 + Math.random() * 0.5,
+                    opacity: 0.045 + Math.random() * 0.09,
+                    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+                    drift: (Math.random() - 0.5) * 0.28,
+                }));
+
+                function draw() {
+                    ctx.clearRect(0, 0, W, H);
+                    for (const p of pts) {
+                        ctx.globalAlpha = p.opacity;
+                        ctx.fillStyle = p.color;
+                        const px = Math.round(p.x / SZ) * SZ;
+                        const py = Math.round(p.y / SZ) * SZ;
+                        ctx.fillRect(px, py, p.size, p.size);
+                        p.y -= p.speed;
+                        p.x += p.drift;
+                        if (p.y + p.size < 0) {
+                            p.y = H + p.size;
+                            p.x = Math.random() * W;
+                        }
+                        if (p.x > W) p.x = 0;
+                        if (p.x < 0) p.x = W;
+                    }
+                    requestAnimationFrame(draw);
+                }
+                draw();
+
+                // theme toggle
+                const toggle = document.getElementById("themeToggle");
+                const root = document.documentElement;
+                const mq = window.matchMedia("(prefers-color-scheme: dark)");
+                const searchInput = document.getElementById("serviceSearch");
+                const tagFilters = document.getElementById("tagFilters");
+                const serviceCards = Array.from(
+                    document.querySelectorAll(".grid > a.card[href]"),
+                );
+                const searchEmpty = document.getElementById("searchEmpty");
+                const cardTags = Array.from(
+                    new Set(
+                        serviceCards
+                            .map((card) =>
+                                card
+                                    .querySelector(".card-tag")
+                                    ?.textContent?.trim(),
+                            )
+                            .filter(Boolean),
+                    ),
+                );
+                let selectedTag = "";
+
+                function applyTheme(t) {
+                    root.setAttribute("data-theme", t);
+                    toggle.textContent = t === "dark" ? "◑ LIGHT" : "◐ DARK";
+                    localStorage.setItem("theme", t);
+                }
+
+                applyTheme(
+                    localStorage.getItem("theme") ||
+                        (mq.matches ? "dark" : "light"),
+                );
+
+                toggle.addEventListener("click", () => {
+                    applyTheme(
+                        root.getAttribute("data-theme") === "dark"
+                            ? "light"
+                            : "dark",
+                    );
+                });
+
+                // audio play/pause functionality
+                const audioToggle = document.getElementById("audioToggle");
+                const bgAudio = document.getElementById("bgAudio");
+                const playIcon = audioToggle.querySelector(".play-icon");
+                const pauseIcon = audioToggle.querySelector(".pause-icon");
+                const audioLabel = audioToggle.querySelector(".audio-label");
+                let isPlaying = false;
+
+                bgAudio.src = "./audio.mp3"; // Set your audio file URL here
+
+                audioToggle.addEventListener("click", () => {
+                    if (!bgAudio.src) {
+                        // No audio source set - could show an alert or just toggle visual state
+                        console.log(
+                            "No audio source set. Please add an audio file URL.",
+                        );
+                        return;
+                    }
+
+                    if (isPlaying) {
+                        bgAudio.pause();
+                        playIcon.style.display = "block";
+                        pauseIcon.style.display = "none";
+                        audioLabel.textContent = "PLAY";
+                        audioToggle.classList.remove("playing");
+                    } else {
+                        bgAudio.play().catch((e) => {
+                            console.log("Audio playback failed:", e);
+                        });
+                        playIcon.style.display = "none";
+                        pauseIcon.style.display = "block";
+                        audioLabel.textContent = "PAUSE";
+                        audioToggle.classList.add("playing");
+                    }
+                    isPlaying = !isPlaying;
+                });
+
+                // Handle audio ending
+                bgAudio.addEventListener("ended", () => {
+                    isPlaying = false;
+                    playIcon.style.display = "block";
+                    pauseIcon.style.display = "none";
+                    audioLabel.textContent = "PLAY";
+                    audioToggle.classList.remove("playing");
+                });
+
+                function normalizeText(value) {
+                    return value.replace(/\s+/g, " ").trim().toLowerCase();
+                }
+
+                function renderTagFilters() {
+                    const tags = ["All", ...cardTags];
+
+                    for (const tag of tags) {
+                        const isActive =
+                            tag === "All" ? !selectedTag : tag === selectedTag;
+                        const button = document.createElement("button");
+                        button.type = "button";
+                        button.className = "tag-filter-button";
+                        button.textContent = tag;
+                        button.classList.toggle("is-active", isActive);
+                        button.setAttribute("aria-pressed", String(isActive));
+                        button.addEventListener("click", () => {
+                            selectedTag = tag === "All" ? "" : tag;
+                            updateFilters();
+                        });
+                        tagFilters.appendChild(button);
+                    }
+                }
+
+                function updateTagFilterState() {
+                    for (const button of tagFilters.querySelectorAll(
+                        "button",
+                    )) {
+                        const isAllButton = button.textContent === "All";
+                        const isActive = isAllButton
+                            ? !selectedTag
+                            : button.textContent === selectedTag;
+                        button.classList.toggle("is-active", isActive);
+                        button.setAttribute("aria-pressed", String(isActive));
+                    }
+                }
+
+                function filterServices(query, tag) {
+                    const normalizedQuery = normalizeText(query);
+                    const normalizedTag = normalizeText(tag);
+                    let visibleCount = 0;
+
+                    for (const card of serviceCards) {
+                        const cardText = normalizeText(card.textContent);
+                        const cardTag = normalizeText(
+                            card.querySelector(".card-tag")?.textContent || "",
+                        );
+                        const matchesQuery =
+                            !normalizedQuery ||
+                            cardText.includes(normalizedQuery);
+                        const matchesTag =
+                            !normalizedTag || cardTag === normalizedTag;
+                        const matches = matchesQuery && matchesTag;
+                        card.classList.toggle("is-hidden", !matches);
+                        if (matches) visibleCount += 1;
+                    }
+
+                    searchEmpty.classList.toggle(
+                        "is-hidden",
+                        visibleCount > 0 ||
+                            (normalizedQuery.length === 0 &&
+                                normalizedTag.length === 0),
+                    );
+                }
+
+                function updateFilters() {
+                    updateTagFilterState();
+                    filterServices(searchInput.value, selectedTag);
+                }
+
+                renderTagFilters();
+
+                searchInput.addEventListener("input", (event) => {
+                    filterServices(event.target.value, selectedTag);
+                });
+            })();
+        </script>
+    </body>
+</html>
