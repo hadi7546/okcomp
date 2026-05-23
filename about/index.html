@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="fa">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>okcomp - about</title>
+    <link href="/images/favicon.png" rel="icon" />
+    <style>
+        @font-face {
+            font-family: "VT323";
+            src: url("/VT323-Regular.ttf") format("truetype");
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: "Unixel";
+            src: url("/Unixel-Regular.woff2") format("truetype");
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        :root {
+            --bg: #f0f0e8;
+            --fg: #1a1a18;
+            --blue: #5ba3d0;
+            --blue-dark: #1d5a8a;
+            --blue-pale: #c5dff0;
+            --accent: #d04a20;
+            --gray: #888880;
+            --card-bg: #ffffff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --bg: #0c0c0a;
+                --fg: #e8e8e0;
+                --blue: #6ab4e0;
+                --blue-dark: #8ac8f0;
+                --blue-pale: #0e2232;
+                --accent: #e05828;
+                --gray: #7a7a72;
+                --card-bg: #181816;
+            }
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #0c0c0a;
+            --fg: #e8e8e0;
+            --blue: #6ab4e0;
+            --blue-dark: #8ac8f0;
+            --blue-pale: #0e2232;
+            --accent: #e05828;
+            --gray: #7a7a72;
+            --card-bg: #181816;
+        }
+
+        :root[data-theme="light"] {
+            --bg: #f0f0e8;
+            --fg: #1a1a18;
+            --blue: #5ba3d0;
+            --blue-dark: #1d5a8a;
+            --blue-pale: #c5dff0;
+            --accent: #d04a20;
+            --gray: #888880;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--fg);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            position: relative;
+            overflow-x: hidden;
+            transition: background 0.25s, color 0.25s;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(91, 163, 208, 0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(91, 163, 208, 0.07) 1px, transparent 1px);
+            background-size: 8px 8px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 3px,
+                    rgba(0, 0, 0, 0.018) 3px,
+                    rgba(0, 0, 0, 0.018) 4px);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* okcomp menu - shared fixed component */
+        .site-menu {
+            position: fixed;
+            top: 28px;
+            right: 32px;
+            z-index: 30;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            direction: ltr;
+            font-family: "VT323", monospace;
+        }
+
+        .menu-toggle,
+        .menu-item {
+            font-family: inherit;
+            font-size: 1.08rem;
+            line-height: 1;
+            letter-spacing: 0.08em;
+            color: var(--fg);
+            border: 2px solid var(--fg);
+            background: var(--card-bg);
+            box-shadow: 3px 3px 0 var(--fg);
+            text-transform: uppercase;
+            cursor: pointer;
+            user-select: none;
+            transition:
+                transform 0.08s,
+                background 0.25s,
+                color 0.25s,
+                border-color 0.25s,
+                box-shadow 0.08s;
+        }
+
+        .menu-toggle {
+            width: 94px;
+            height: 38px;
+            padding: 0 10px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .menu-toggle:hover,
+        .menu-item:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0 var(--fg);
+        }
+
+        .menu-panel {
+            display: none;
+            width: 214px;
+            flex-direction: column;
+            gap: 8px;
+            padding: 10px;
+            background: var(--card-bg);
+            border: 2px solid var(--fg);
+            box-shadow: 4px 4px 0 var(--fg);
+        }
+
+        .site-menu.is-open .menu-panel {
+            display: flex;
+        }
+
+        .menu-item {
+            width: 100%;
+            height: 40px;
+            padding: 0 10px;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 22px;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .menu-label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            grid-column: 1;
+            justify-self: start;
+        }
+
+        .menu-icon {
+            grid-column: 2;
+            width: 22px;
+            height: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            justify-self: end;
+        }
+
+        .menu-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--fg);
+            image-rendering: pixelated;
+            display: block;
+        }
+
+        .theme-icon {
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .menu-item.playing,
+        .menu-item.is-active {
+            background: var(--blue-pale);
+            border-color: var(--blue);
+            color: var(--blue-dark);
+        }
+
+        .menu-item.playing svg,
+        .menu-item.is-active svg {
+            fill: var(--blue-dark);
+        }
+
+        .about-card {
+            position: relative;
+            z-index: 1;
+            width: min(680px, 100%);
+            background: var(--card-bg);
+            border: 2px solid var(--fg);
+            box-shadow: 6px 6px 0 var(--fg);
+            padding: 28px;
+        }
+
+        .about-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--blue);
+        }
+
+        .eyebrow {
+            direction: ltr;
+            text-align: left;
+            font-family: "VT323", monospace;
+            font-size: 1.25rem;
+            letter-spacing: 0.14em;
+            color: var(--blue-dark);
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            font-family: "VT323", monospace;
+            font-size: clamp(3rem, 12vw, 5rem);
+            line-height: 0.9;
+            direction: ltr;
+            text-align: left;
+            letter-spacing: 0.04em;
+            color: var(--fg);
+            text-shadow: 4px 0 0 var(--blue), 0 4px 0 var(--blue-pale);
+            margin-bottom: 24px;
+        }
+
+        p {
+            font-size: 1.05rem;
+            line-height: 2;
+            color: var(--fg);
+            margin-bottom: 18px;
+        }
+
+        a {
+            color: var(--blue-dark);
+            text-decoration: none;
+            border-bottom: 1px solid var(--blue);
+        }
+
+        a:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .donate {
+            margin-top: 20px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(128, 128, 128, 0.35);
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 20px;
+            direction: ltr;
+            font-family: "VT323", monospace;
+            font-size: 1.25rem;
+            letter-spacing: 0.1em;
+            color: var(--fg);
+            border: 2px solid var(--fg);
+            box-shadow: 3px 3px 0 var(--fg);
+            padding: 7px 10px 5px;
+            background: var(--card-bg);
+        }
+
+        .back:hover {
+            color: var(--accent);
+            border-color: var(--fg);
+            transform: translate(1px, 1px);
+            box-shadow: 2px 2px 0 var(--fg);
+        }
+
+        @media (max-width: 640px) {
+            body {
+                align-items: flex-start;
+                padding: 76px 18px 18px;
+            }
+
+            .site-menu {
+                top: 14px;
+                right: 14px;
+            }
+
+            .menu-toggle {
+                width: 88px;
+                height: 36px;
+                font-size: 1rem;
+                box-shadow: 2px 2px 0 var(--fg);
+            }
+
+            .menu-panel {
+                width: min(214px, calc(100vw - 28px));
+                box-shadow: 3px 3px 0 var(--fg);
+            }
+
+            .menu-item {
+                height: 38px;
+                font-size: 1rem;
+            }
+
+            .about-card {
+                padding: 22px 18px;
+                box-shadow: 4px 4px 0 var(--fg);
+                font-family: Unixel;
+            }
+
+            p {
+                font-size: 0.98rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="site-menu" id="siteMenu">
+        <button aria-expanded="false" aria-label="Open menu" class="menu-toggle" id="menuToggle" type="button">☰
+            MENU</button>
+        <div aria-label="okcomp menu" class="menu-panel" id="menuPanel">
+            <button aria-label="Toggle theme" class="menu-item" id="themeToggle" type="button">
+                <span class="menu-label theme-label">DARK</span>
+                <span class="menu-icon theme-icon" aria-hidden="true">◐</span>
+            </button>
+            <button aria-label="Play/Pause audio" class="menu-item" id="audioToggle" type="button">
+                <span class="menu-label audio-label">PLAY</span>
+                <span class="menu-icon"><svg aria-hidden="true" class="play-icon" viewbox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 5v14l11-7z"></path>
+                    </svg><svg aria-hidden="true" class="pause-icon" style="display: none" viewbox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
+                    </svg></span>
+            </button>
+            <a aria-label="Home" class="menu-item menu-link" href="/"><span class="menu-label">HOME</span><span
+                    class="menu-icon"><svg aria-hidden="true" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+                    </svg></span></a>
+        </div>
+    </div>
+    <audio id="bgAudio" loop="">
+        <source src="/audio.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+    </audio>
+    <main class="about-card">
+        <h1>okcomp</h1>
+        <p>
+            اوکی‌کامپ(الهام گرفته شده از اسم آلبوم OK Computer رادیوهد.) از فروردین ۴۰۵ به دلیل قطعی‌های گسترده و
+            ناعادلانه اینترنت در ایران شروع به کار کرد و هدف اولش ساختن یه مکان برای آرشیو و گوش دادن به آهنگ‌هایی بود که
+            دوست داشتم. بعدش شد به یک مکان برای ابزارهای جالبی که می‌شه selfhost کرد و یه سری آرشیو از سایت‌هایی که
+            خاص هستن. مثل سایت هادی پاکزاد. خلاصه که فعلا هستیم.    </p>
+        <p class="donate">
+            اگر از سرویس‌ها استفاده کردید و خوشتون اومد می‌تونید من رو
+            <a href="https://donofa.ir/okcomp" rel="noopener noreferrer" target="_blank">دونیت</a>
+            کنید. =) و
+            اگر نقد، پیشنهاد و یا حتی درخواستی داشتید می‌تونید به
+            <a href="https://t.me/hadi7546" rel="noopener noreferrer" target="_blank">تلگرام</a>
+            من پیام بدید یا
+            <a href="mailto:ok@okcomp.ir">ایمیل</a>
+            بزنید.
+        </p>
+    </main>
+    <script>
+        (function () {
+            const root = document.documentElement;
+            const mq = window.matchMedia("(prefers-color-scheme: dark)");
+            const siteMenu = document.getElementById("siteMenu");
+            const menuToggle = document.getElementById("menuToggle");
+            const themeToggle = document.getElementById("themeToggle");
+            const themeLabel = themeToggle.querySelector(".theme-label") || themeToggle;
+            const themeIcon = themeToggle.querySelector(".theme-icon");
+            const audioToggle = document.getElementById("audioToggle");
+            const bgAudio = document.getElementById("bgAudio");
+            const playIcon = audioToggle.querySelector(".play-icon");
+            const pauseIcon = audioToggle.querySelector(".pause-icon");
+            const audioLabel = audioToggle.querySelector(".audio-label");
+            let isPlaying = false;
+
+            function setMenuOpen(isOpen) {
+                siteMenu.classList.toggle("is-open", isOpen);
+                menuToggle.setAttribute("aria-expanded", String(isOpen));
+                menuToggle.textContent = isOpen ? "× CLOSE" : "☰ MENU";
+            }
+
+            function applyTheme(theme) {
+                root.setAttribute("data-theme", theme);
+                themeLabel.textContent = theme === "dark" ? "LIGHT" : "DARK";
+                if (themeIcon) themeIcon.textContent = theme === "dark" ? "◑" : "◐";
+                localStorage.setItem("theme", theme);
+            }
+
+            applyTheme(localStorage.getItem("theme") || (mq.matches ? "dark" : "light"));
+
+            menuToggle.addEventListener("click", () => {
+                setMenuOpen(!siteMenu.classList.contains("is-open"));
+            });
+
+            document.addEventListener("click", (event) => {
+                if (!siteMenu.contains(event.target)) {
+                    setMenuOpen(false);
+                }
+            });
+
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") {
+                    setMenuOpen(false);
+                }
+            });
+
+            themeToggle.addEventListener("click", () => {
+                applyTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
+            });
+
+            audioToggle.addEventListener("click", () => {
+                if (isPlaying) {
+                    bgAudio.pause();
+                    playIcon.style.display = "block";
+                    pauseIcon.style.display = "none";
+                    audioLabel.textContent = "PLAY";
+                    audioToggle.classList.remove("playing");
+                } else {
+                    bgAudio.play().catch((error) => {
+                        console.log("Audio playback failed:", error);
+                    });
+                    playIcon.style.display = "none";
+                    pauseIcon.style.display = "block";
+                    audioLabel.textContent = "PAUSE";
+                    audioToggle.classList.add("playing");
+                }
+                isPlaying = !isPlaying;
+            });
+        })();
+    </script>
+</body>
+
+</html>

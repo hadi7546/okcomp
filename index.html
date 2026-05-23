@@ -1,11 +1,12 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>okcomp</title>
-        <link rel="icon" href="./images/favicon.png" />
-        <style>
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>okcomp</title>
+<link href="./images/favicon.png" rel="icon"/>
+<style>
             @font-face {
                 font-family: "VT323";
                 src: url("VT323-Regular.ttf") format("truetype");
@@ -455,6 +456,48 @@
                 max-width: 20rem;
             }
 
+
+            .card--radio {
+                --radio-main: #00c27a;
+                --radio-dark: #00543c;
+                --radio-pale: #d6fff0;
+                background:
+                    radial-gradient(circle at 92% 20%, rgba(0, 194, 122, 0.28) 0 18%, transparent 19%),
+                    linear-gradient(135deg, rgba(0, 194, 122, 0.18), rgba(255, 214, 102, 0.12)),
+                    var(--card-bg);
+                border-color: var(--radio-dark);
+                box-shadow: 4px 4px 0 var(--radio-dark);
+            }
+
+            .card--radio::before {
+                height: 5px;
+                background: linear-gradient(90deg, #00c27a 0%, #ffd666 48%, #5ba3d0 100%);
+            }
+
+            .card--radio:hover {
+                box-shadow: 6px 6px 0 var(--radio-dark);
+            }
+
+            .card--radio .card-tag {
+                color: var(--radio-dark);
+                background: var(--radio-pale);
+                border-color: var(--radio-main);
+            }
+
+            .card--radio .card-name {
+                color: var(--radio-dark);
+            }
+
+            :root[data-theme="dark"] .card--radio {
+                --radio-main: #42f5a7;
+                --radio-dark: #9fffd5;
+                --radio-pale: #06261b;
+                background:
+                    radial-gradient(circle at 92% 20%, rgba(66, 245, 167, 0.18) 0 18%, transparent 19%),
+                    linear-gradient(135deg, rgba(66, 245, 167, 0.14), rgba(255, 214, 102, 0.08)),
+                    var(--card-bg);
+            }
+
             /* status bar */
             .statusbar {
                 width: 100%;
@@ -642,82 +685,121 @@
                 color: var(--blue);
             }
 
-            /* theme toggle button */
-            .theme-toggle {
-                position: fixed;
-                top: 28px;
-                left: 32px;
-                font-family: "Share Tech Mono", monospace;
-                font-size: 0.6rem;
-                letter-spacing: 0.12em;
-                color: var(--fg);
-                border: 2px solid var(--fg);
-                padding: 5px 9px;
-                background: var(--card-bg);
-                box-shadow: 3px 3px 0 var(--fg);
-                text-transform: uppercase;
-                z-index: 2;
-                opacity: 0.7;
-                cursor: pointer;
-                user-select: none;
-                transition:
-                    opacity 0.1s,
-                    background 0.25s,
-                    color 0.25s,
-                    border-color 0.25s,
-                    box-shadow 0.25s;
-            }
-
-            .theme-toggle:hover {
-                opacity: 1;
-            }
-
-            /* play/pause button - right top corner */
-            .audio-toggle {
+            /* okcomp menu - shared fixed component */
+            .site-menu {
                 position: fixed;
                 top: 28px;
                 right: 32px;
-                font-family: "Share Tech Mono", monospace;
-                font-size: 0.6rem;
-                letter-spacing: 0.12em;
+                z-index: 30;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 8px;
+                direction: ltr;
+                font-family: "VT323", monospace;
+            }
+
+            .menu-toggle,
+            .menu-item {
+                font-family: inherit;
+                font-size: 1.08rem;
+                line-height: 1;
+                letter-spacing: 0.08em;
                 color: var(--fg);
                 border: 2px solid var(--fg);
-                padding: 5px 9px;
                 background: var(--card-bg);
                 box-shadow: 3px 3px 0 var(--fg);
                 text-transform: uppercase;
-                z-index: 2;
-                opacity: 0.7;
                 cursor: pointer;
                 user-select: none;
                 transition:
-                    opacity 0.1s,
+                    transform 0.08s,
                     background 0.25s,
                     color 0.25s,
                     border-color 0.25s,
-                    box-shadow 0.25s;
+                    box-shadow 0.08s;
+            }
+
+            .menu-toggle {
+                width: 94px;
+                height: 38px;
+                padding: 0 10px;
+                text-align: center;
+                white-space: nowrap;
+            }
+
+            .menu-toggle:hover,
+            .menu-item:hover {
+                transform: translate(-1px, -1px);
+                box-shadow: 4px 4px 0 var(--fg);
+            }
+
+            .menu-panel {
+                display: none;
+                width: 214px;
+                flex-direction: column;
+                gap: 8px;
+                padding: 10px;
+                background: var(--card-bg);
+                border: 2px solid var(--fg);
+                box-shadow: 4px 4px 0 var(--fg);
+            }
+
+            .site-menu.is-open .menu-panel {
                 display: flex;
+            }
+
+            .menu-item {
+                width: 100%;
+                height: 40px;
+                padding: 0 10px;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) 22px;
                 align-items: center;
-                gap: 6px;
+                gap: 10px;
+                text-align: left;
+                white-space: nowrap;
+                text-decoration: none;
             }
 
-            .audio-toggle:hover {
-                opacity: 1;
+            .menu-label {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                grid-column: 1;
+                justify-self: start;
             }
 
-            .audio-toggle svg {
-                width: 14px;
-                height: 14px;
+            .menu-icon {
+                grid-column: 2;
+                width: 22px;
+                height: 22px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                justify-self: end;
+            }
+
+            .menu-icon svg {
+                width: 16px;
+                height: 16px;
                 fill: var(--fg);
                 image-rendering: pixelated;
+                display: block;
             }
-
-            .audio-toggle.playing {
+            
+            .theme-icon {
+                font-size: 1rem;
+                line-height: 1;
+            }
+.menu-item.playing,
+            .menu-item.is-active {
                 background: var(--blue-pale);
                 border-color: var(--blue);
+                color: var(--blue-dark);
             }
 
-            .audio-toggle.playing svg {
+            .menu-item.playing svg,
+            .menu-item.is-active svg {
                 fill: var(--blue-dark);
             }
 
@@ -730,7 +812,7 @@
 
                 .container {
                     max-width: 100%;
-                    padding: 6.5rem 1rem 2rem;
+                    padding: 5.25rem 1rem 2rem;
                     gap: 1.75rem;
                 }
 
@@ -834,24 +916,27 @@
                     padding: 12px 11px 11px;
                 }
 
-                .theme-toggle,
-                .audio-toggle {
+                .site-menu {
                     top: 14px;
-                    padding: 5px 7px;
+                    right: 14px;
+                }
+
+                .menu-toggle {
+                    width: 88px;
+                    height: 36px;
+                    font-size: 1rem;
                     box-shadow: 2px 2px 0 var(--fg);
                 }
 
-                .theme-toggle {
-                    left: 14px;
+                .menu-panel {
+                    width: min(214px, calc(100vw - 28px));
+                    box-shadow: 3px 3px 0 var(--fg);
                 }
 
-                .audio-toggle {
-                    right: 14px;
-                    gap: 4px;
-                }
-
-                .audio-label {
-                    display: none;
+                .menu-item {
+                    height: 38px;
+                    font-size: 1rem;
+                    box-shadow: 2px 2px 0 var(--fg);
                 }
             }
 
@@ -871,778 +956,289 @@
                 z-index: 10;
             }
         </style>
-    </head>
-    <body>
-        <!-- scanbeam -->
-        <div class="scanbeam"></div>
-
-        <!-- theme toggle -->
-        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-            ◐ DARK
-        </button>
-
-        <!-- audio play/pause button -->
-        <button
-            class="audio-toggle"
-            id="audioToggle"
-            aria-label="Play/Pause audio"
-        >
-            <svg
-                class="play-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                height="18"
-                viewBox="0 0 24 24"
-                width="18"
-            >
-                <path d="M8 5v14l11-7z" />
-            </svg>
-            <svg
-                class="pause-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                height="18"
-                viewBox="0 0 24 24"
-                width="18"
-                display="none"
-            >
-                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-            </svg>
-
-            <span class="audio-label">PLAY</span>
-        </button>
-
-        <!-- audio element - replace src with your audio file -->
-        <audio id="bgAudio" loop>
-            <source src="./audio.mp3" type="audio/mpeg" />
+</head>
+<body>
+<!-- scanbeam -->
+<div class="scanbeam"></div>
+<!-- okcomp menu -->
+<div class="site-menu" id="siteMenu">
+<button aria-expanded="false" aria-label="Open menu" class="menu-toggle" id="menuToggle" type="button">☰ MENU</button>
+<div aria-label="okcomp menu" class="menu-panel" id="menuPanel">
+<button aria-label="Toggle theme" class="menu-item" id="themeToggle" type="button">
+<span class="menu-label theme-label">DARK</span>
+<span class="menu-icon theme-icon" aria-hidden="true">◐</span>
+</button>
+<button aria-label="Play/Pause audio" class="menu-item" id="audioToggle" type="button">
+<span class="menu-label audio-label">PLAY</span>
+<span class="menu-icon"><svg aria-hidden="true" class="play-icon" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg><svg aria-hidden="true" class="pause-icon" style="display: none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg></span>
+</button>
+<a aria-label="About okcomp" class="menu-item menu-link" href="./about">
+<span class="menu-label">ABOUT</span>
+<span class="menu-icon"><svg aria-hidden="true" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 16a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4zm1.1-4.5h-2v-.6c0-1.1.5-1.8 1.4-2.4.8-.5 1.2-.9 1.2-1.5 0-.7-.6-1.2-1.6-1.2-.9 0-1.6.4-2.2 1l-1.2-1.4c.8-.9 2-1.5 3.5-1.5 2.1 0 3.6 1.1 3.6 2.9 0 1.3-.7 2-1.8 2.8-.7.5-.9.8-.9 1.4v.5z"></path></svg></span>
+</a>
+</div>
+</div>
+<!-- audio element - replace src with your audio file -->
+<audio id="bgAudio" loop="">
+<source src="./audio.mp3" type="audio/mpeg"/>
             Your browser does not support the audio element.
         </audio>
-
-        <!-- faint highway -->
-        <div class="highway">
-            <svg viewBox="0 0 600 340" xmlns="http://www.w3.org/2000/svg">
-                <!-- road perspective lines -->
-                <line
-                    x1="300"
-                    y1="0"
-                    x2="50"
-                    y2="340"
-                    stroke="#1a1a18"
-                    stroke-width="1.5"
-                    opacity="0.6"
-                />
-                <line
-                    x1="300"
-                    y1="0"
-                    x2="550"
-                    y2="340"
-                    stroke="#1a1a18"
-                    stroke-width="1.5"
-                    opacity="0.6"
-                />
-                <line
-                    x1="300"
-                    y1="0"
-                    x2="140"
-                    y2="340"
-                    stroke="#1a1a18"
-                    stroke-width="0.8"
-                    opacity="0.4"
-                />
-                <line
-                    x1="300"
-                    y1="0"
-                    x2="460"
-                    y2="340"
-                    stroke="#1a1a18"
-                    stroke-width="0.8"
-                    opacity="0.4"
-                />
-                <line
-                    x1="300"
-                    y1="0"
-                    x2="220"
-                    y2="340"
-                    stroke="#1a1a18"
-                    stroke-width="0.5"
-                    opacity="0.3"
-                />
-                <line
-                    x1="300"
-                    y1="0"
-                    x2="380"
-                    y2="340"
-                    stroke="#1a1a18"
-                    stroke-width="0.5"
-                    opacity="0.3"
-                />
-                <!-- interchange arc -->
-                <path
-                    d="M 80 340 Q 180 220 300 180 Q 420 140 500 60"
-                    fill="none"
-                    stroke="#5ba3d0"
-                    stroke-width="2"
-                    opacity="0.5"
-                />
-                <path
-                    d="M 120 340 Q 210 230 300 195 Q 390 160 480 80"
-                    fill="none"
-                    stroke="#5ba3d0"
-                    stroke-width="1"
-                    opacity="0.3"
-                />
-                <!-- pixel cars -->
-                <rect
-                    x="182"
-                    y="284"
-                    width="24"
-                    height="12"
-                    fill="#888880"
-                    opacity="0.7"
-                />
-                <rect
-                    x="186"
-                    y="286"
-                    width="16"
-                    height="6"
-                    fill="#aaaaaa"
-                    opacity="0.5"
-                />
-                <rect
-                    x="321"
-                    y="264"
-                    width="20"
-                    height="10"
-                    fill="#5ba3d0"
-                    opacity="0.7"
-                />
-                <rect
-                    x="325"
-                    y="266"
-                    width="12"
-                    height="5"
-                    fill="#c5dff0"
-                    opacity="0.5"
-                />
-                <rect
-                    x="394"
-                    y="302"
-                    width="18"
-                    height="9"
-                    fill="#d04a20"
-                    opacity="0.7"
-                />
-                <rect
-                    x="254"
-                    y="246"
-                    width="16"
-                    height="8"
-                    fill="#888880"
-                    opacity="0.6"
-                />
-                <rect
-                    x="112"
-                    y="316"
-                    width="20"
-                    height="10"
-                    fill="#1a1a18"
-                    opacity="0.5"
-                />
-            </svg>
-        </div>
-
-        <!-- ghost figure pixel art -->
-        <svg
-            class="ghost"
-            viewBox="0 0 12 28"
-            xmlns="http://www.w3.org/2000/svg"
-            style="image-rendering: pixelated"
-        >
-            <rect x="3" y="0" width="6" height="6" fill="#5ba3d0" />
-            <rect x="2" y="6" width="8" height="12" fill="#5ba3d0" />
-            <rect x="1" y="18" width="4" height="10" fill="#5ba3d0" />
-            <rect x="7" y="18" width="4" height="10" fill="#5ba3d0" />
-        </svg>
-
-        <!-- ghost figure 2 — walking pose, right side -->
-        <svg
-            class="ghost-2"
-            viewBox="0 0 12 28"
-            xmlns="http://www.w3.org/2000/svg"
-            style="image-rendering: pixelated"
-        >
-            <rect x="3" y="0" width="6" height="6" fill="#5ba3d0" />
-            <rect x="2" y="6" width="8" height="10" fill="#5ba3d0" />
-            <rect x="0" y="8" width="3" height="6" fill="#5ba3d0" />
-            <rect x="9" y="9" width="3" height="5" fill="#5ba3d0" />
-            <rect x="2" y="16" width="3" height="12" fill="#5ba3d0" />
-            <rect x="7" y="16" width="3" height="10" fill="#5ba3d0" />
-        </svg>
-
-        <!-- ghost figure 3 — distant/small -->
-        <svg
-            class="ghost-3"
-            viewBox="0 0 10 22"
-            xmlns="http://www.w3.org/2000/svg"
-            style="image-rendering: pixelated"
-        >
-            <rect x="3" y="0" width="4" height="4" fill="#5ba3d0" />
-            <rect x="2" y="4" width="6" height="9" fill="#5ba3d0" />
-            <rect x="2" y="13" width="2" height="9" fill="#5ba3d0" />
-            <rect x="6" y="13" width="2" height="7" fill="#5ba3d0" />
-        </svg>
-
-        <!-- power lines across top -->
-        <svg
-            class="powerlines"
-            viewBox="0 0 1200 80"
-            xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
-        >
-            <line
-                x1="90"
-                y1="0"
-                x2="90"
-                y2="80"
-                stroke="#1a1a18"
-                stroke-width="2.5"
-            />
-            <line
-                x1="295"
-                y1="0"
-                x2="295"
-                y2="80"
-                stroke="#1a1a18"
-                stroke-width="2.5"
-            />
-            <line
-                x1="530"
-                y1="0"
-                x2="530"
-                y2="80"
-                stroke="#1a1a18"
-                stroke-width="2.5"
-            />
-            <line
-                x1="760"
-                y1="0"
-                x2="760"
-                y2="80"
-                stroke="#1a1a18"
-                stroke-width="2.5"
-            />
-            <line
-                x1="970"
-                y1="0"
-                x2="970"
-                y2="80"
-                stroke="#1a1a18"
-                stroke-width="2.5"
-            />
-            <line
-                x1="0"
-                y1="18"
-                x2="1200"
-                y2="20"
-                stroke="#1a1a18"
-                stroke-width="1"
-            />
-            <line
-                x1="0"
-                y1="33"
-                x2="1200"
-                y2="35"
-                stroke="#1a1a18"
-                stroke-width="0.8"
-            />
-            <line
-                x1="0"
-                y1="48"
-                x2="1200"
-                y2="50"
-                stroke="#1a1a18"
-                stroke-width="0.8"
-            />
-        </svg>
-
-        <!-- pixel sneaker — nod to the cover's bottom-right corner -->
-        <svg
-            class="sneaker"
-            viewBox="0 0 52 30"
-            xmlns="http://www.w3.org/2000/svg"
-            style="image-rendering: pixelated"
-        >
-            <rect x="2" y="24" width="48" height="4" fill="#1a1a18" />
-            <rect x="2" y="20" width="48" height="6" fill="white" />
-            <rect x="6" y="12" width="38" height="10" fill="#d04a20" />
-            <rect x="6" y="8" width="14" height="6" fill="#d04a20" />
-            <rect x="16" y="6" width="10" height="8" fill="white" />
-            <rect x="24" y="10" width="20" height="4" fill="#5ba3d0" />
-            <rect x="40" y="8" width="8" height="12" fill="#d04a20" />
-            <rect x="17" y="8" width="8" height="1" fill="#888880" />
-            <rect x="17" y="10" width="8" height="1" fill="#888880" />
-            <rect x="17" y="12" width="8" height="1" fill="#888880" />
-        </svg>
-
-        <!-- track title watermarks -->
-        <div
-            class="tracktitle"
-            style="left: 3%; top: 44%; transform: rotate(-12deg)"
-        >
+<!-- faint highway -->
+<div class="highway">
+<svg viewbox="0 0 600 340" xmlns="http://www.w3.org/2000/svg">
+<!-- road perspective lines -->
+<line opacity="0.6" stroke="#1a1a18" stroke-width="1.5" x1="300" x2="50" y1="0" y2="340"></line>
+<line opacity="0.6" stroke="#1a1a18" stroke-width="1.5" x1="300" x2="550" y1="0" y2="340"></line>
+<line opacity="0.4" stroke="#1a1a18" stroke-width="0.8" x1="300" x2="140" y1="0" y2="340"></line>
+<line opacity="0.4" stroke="#1a1a18" stroke-width="0.8" x1="300" x2="460" y1="0" y2="340"></line>
+<line opacity="0.3" stroke="#1a1a18" stroke-width="0.5" x1="300" x2="220" y1="0" y2="340"></line>
+<line opacity="0.3" stroke="#1a1a18" stroke-width="0.5" x1="300" x2="380" y1="0" y2="340"></line>
+<!-- interchange arc -->
+<path d="M 80 340 Q 180 220 300 180 Q 420 140 500 60" fill="none" opacity="0.5" stroke="#5ba3d0" stroke-width="2"></path>
+<path d="M 120 340 Q 210 230 300 195 Q 390 160 480 80" fill="none" opacity="0.3" stroke="#5ba3d0" stroke-width="1"></path>
+<!-- pixel cars -->
+<rect fill="#888880" height="12" opacity="0.7" width="24" x="182" y="284"></rect>
+<rect fill="#aaaaaa" height="6" opacity="0.5" width="16" x="186" y="286"></rect>
+<rect fill="#5ba3d0" height="10" opacity="0.7" width="20" x="321" y="264"></rect>
+<rect fill="#c5dff0" height="5" opacity="0.5" width="12" x="325" y="266"></rect>
+<rect fill="#d04a20" height="9" opacity="0.7" width="18" x="394" y="302"></rect>
+<rect fill="#888880" height="8" opacity="0.6" width="16" x="254" y="246"></rect>
+<rect fill="#1a1a18" height="10" opacity="0.5" width="20" x="112" y="316"></rect>
+</svg>
+</div>
+<!-- ghost figure pixel art -->
+<svg class="ghost" style="image-rendering: pixelated" viewbox="0 0 12 28" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#5ba3d0" height="6" width="6" x="3" y="0"></rect>
+<rect fill="#5ba3d0" height="12" width="8" x="2" y="6"></rect>
+<rect fill="#5ba3d0" height="10" width="4" x="1" y="18"></rect>
+<rect fill="#5ba3d0" height="10" width="4" x="7" y="18"></rect>
+</svg>
+<!-- ghost figure 2 — walking pose, right side -->
+<svg class="ghost-2" style="image-rendering: pixelated" viewbox="0 0 12 28" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#5ba3d0" height="6" width="6" x="3" y="0"></rect>
+<rect fill="#5ba3d0" height="10" width="8" x="2" y="6"></rect>
+<rect fill="#5ba3d0" height="6" width="3" x="0" y="8"></rect>
+<rect fill="#5ba3d0" height="5" width="3" x="9" y="9"></rect>
+<rect fill="#5ba3d0" height="12" width="3" x="2" y="16"></rect>
+<rect fill="#5ba3d0" height="10" width="3" x="7" y="16"></rect>
+</svg>
+<!-- ghost figure 3 — distant/small -->
+<svg class="ghost-3" style="image-rendering: pixelated" viewbox="0 0 10 22" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#5ba3d0" height="4" width="4" x="3" y="0"></rect>
+<rect fill="#5ba3d0" height="9" width="6" x="2" y="4"></rect>
+<rect fill="#5ba3d0" height="9" width="2" x="2" y="13"></rect>
+<rect fill="#5ba3d0" height="7" width="2" x="6" y="13"></rect>
+</svg>
+<!-- power lines across top -->
+<svg class="powerlines" preserveaspectratio="none" viewbox="0 0 1200 80" xmlns="http://www.w3.org/2000/svg">
+<line stroke="#1a1a18" stroke-width="2.5" x1="90" x2="90" y1="0" y2="80"></line>
+<line stroke="#1a1a18" stroke-width="2.5" x1="295" x2="295" y1="0" y2="80"></line>
+<line stroke="#1a1a18" stroke-width="2.5" x1="530" x2="530" y1="0" y2="80"></line>
+<line stroke="#1a1a18" stroke-width="2.5" x1="760" x2="760" y1="0" y2="80"></line>
+<line stroke="#1a1a18" stroke-width="2.5" x1="970" x2="970" y1="0" y2="80"></line>
+<line stroke="#1a1a18" stroke-width="1" x1="0" x2="1200" y1="18" y2="20"></line>
+<line stroke="#1a1a18" stroke-width="0.8" x1="0" x2="1200" y1="33" y2="35"></line>
+<line stroke="#1a1a18" stroke-width="0.8" x1="0" x2="1200" y1="48" y2="50"></line>
+</svg>
+<!-- pixel sneaker — nod to the cover's bottom-right corner -->
+<svg class="sneaker" style="image-rendering: pixelated" viewbox="0 0 52 30" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#1a1a18" height="4" width="48" x="2" y="24"></rect>
+<rect fill="white" height="6" width="48" x="2" y="20"></rect>
+<rect fill="#d04a20" height="10" width="38" x="6" y="12"></rect>
+<rect fill="#d04a20" height="6" width="14" x="6" y="8"></rect>
+<rect fill="white" height="8" width="10" x="16" y="6"></rect>
+<rect fill="#5ba3d0" height="4" width="20" x="24" y="10"></rect>
+<rect fill="#d04a20" height="12" width="8" x="40" y="8"></rect>
+<rect fill="#888880" height="1" width="8" x="17" y="8"></rect>
+<rect fill="#888880" height="1" width="8" x="17" y="10"></rect>
+<rect fill="#888880" height="1" width="8" x="17" y="12"></rect>
+</svg>
+<!-- track title watermarks -->
+<div class="tracktitle" style="left: 3%; top: 44%; transform: rotate(-12deg)">
             KARMA POLICE
         </div>
-        <div
-            class="tracktitle"
-            style="left: 4%; bottom: 24%; transform: rotate(7deg)"
-        >
+<div class="tracktitle" style="left: 4%; bottom: 24%; transform: rotate(7deg)">
             PARANOID ANDROID
         </div>
-        <div
-            class="tracktitle"
-            style="right: 4%; top: 16%; transform: rotate(-17deg)"
-        >
+<div class="tracktitle" style="right: 4%; top: 16%; transform: rotate(-17deg)">
             FITTER HAPPIER
         </div>
-        <div
-            class="tracktitle"
-            style="right: 3%; top: 52%; transform: rotate(11deg)"
-        >
+<div class="tracktitle" style="right: 3%; top: 52%; transform: rotate(11deg)">
             NO SURPRISES
         </div>
-        <div
-            class="tracktitle"
-            style="left: 28%; top: 7%; transform: rotate(-5deg)"
-        >
+<div class="tracktitle" style="left: 28%; top: 7%; transform: rotate(-5deg)">
             EXIT MUSIC
         </div>
-        <div
-            class="tracktitle"
-            style="right: 14%; bottom: 30%; transform: rotate(-9deg)"
-        >
+<div class="tracktitle" style="right: 14%; bottom: 30%; transform: rotate(-9deg)">
             LET DOWN
         </div>
-        <div
-            class="tracktitle"
-            style="left: 8%; top: 7%; transform: rotate(8deg)"
-        >
+<div class="tracktitle" style="left: 8%; top: 7%; transform: rotate(8deg)">
             AIRBAG
         </div>
+<!-- X mark pixel -->
+<svg class="xmark" viewbox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+<line stroke="#1a1a18" stroke-linecap="square" stroke-width="5" x1="4" x2="32" y1="4" y2="32"></line>
+<line stroke="#1a1a18" stroke-linecap="square" stroke-width="5" x1="32" x2="4" y1="4" y2="32"></line>
+</svg>
+<div class="container">
+<div class="header">
+<img alt="okcomp" class="header-logo" src="./images/favicon.png"/>
+<div class="title">okcomp</div>
+<div class="subtitle">self-hosted services and archives</div>
+</div>
+<div class="searchbar">
+<label class="search-label" for="serviceSearch">Search Services</label>
+<div class="search-controls">
+<input autocomplete="off" class="search-input" id="serviceSearch" placeholder="search by name, tag, or description" spellcheck="false" type="search"/>
+<div class="tag-filters" id="tagFilters"></div>
+</div>
+</div>
+<div class="grid">
 
-        <!-- X mark pixel -->
-        <svg
-            class="xmark"
-            viewBox="0 0 36 36"
-            xmlns="http://www.w3.org/2000/svg"
-        >
-            <line
-                x1="4"
-                y1="4"
-                x2="32"
-                y2="32"
-                stroke="#1a1a18"
-                stroke-width="5"
-                stroke-linecap="square"
-            />
-            <line
-                x1="32"
-                y1="4"
-                x2="4"
-                y2="32"
-                stroke="#1a1a18"
-                stroke-width="5"
-                stroke-linecap="square"
-            />
-        </svg>
 
-        <div class="container">
-            <div class="header">
-                <img
-                    src="./images/favicon.png"
-                    class="header-logo"
-                    alt="okcomp"
-                />
 
-                <div class="title">okcomp</div>
 
-                <div class="subtitle">self-hosted services and archives</div>
-            </div>
 
-            <div class="searchbar">
-                <label class="search-label" for="serviceSearch"
-                    >Search Services</label
-                >
-                <div class="search-controls">
-                    <input
-                        class="search-input"
-                        id="serviceSearch"
-                        type="search"
-                        placeholder="search by name, tag, or description"
-                        autocomplete="off"
-                        spellcheck="false"
-                    />
-                    <div class="tag-filters" id="tagFilters"></div>
-                </div>
-            </div>
 
-            <div class="grid">
-                <a class="card" href="https://nr.okcomp.ir">
-                    <div class="card-tag">MUSIC</div>
-                    <!-- pixel music icon -->
-                    <svg
-                        class="card-icon"
-                        viewBox="0 0 28 28"
-                        xmlns="http://www.w3.org/2000/svg"
-                        style="image-rendering: pixelated"
-                    >
-                        <rect
-                            x="4"
-                            y="8"
-                            width="4"
-                            height="12"
-                            fill="#5ba3d0"
-                        />
-                        <rect
-                            x="10"
-                            y="4"
-                            width="4"
-                            height="16"
-                            fill="#5ba3d0"
-                        />
-                        <rect
-                            x="16"
-                            y="10"
-                            width="4"
-                            height="10"
-                            fill="#5ba3d0"
-                        />
-                        <rect
-                            x="22"
-                            y="6"
-                            width="4"
-                            height="14"
-                            fill="#5ba3d0"
-                        />
-                    </svg>
-                    <div class="card-name">Navidrome</div>
-                    <div class="card-desc">
-                        music streaming<br />subsonic api
-                    </div>
-                </a>
 
-                <a class="card" href="https://cp.okcomp.ir">
-                    <div class="card-tag">FILES</div>
-                    <svg
-                        class="card-icon"
-                        viewBox="0 0 28 28"
-                        xmlns="http://www.w3.org/2000/svg"
-                        style="image-rendering: pixelated"
-                    >
-                        <rect
-                            x="2"
-                            y="8"
-                            width="24"
-                            height="16"
-                            fill="#5ba3d0"
-                        />
-                        <rect
-                            x="2"
-                            y="6"
-                            width="10"
-                            height="4"
-                            fill="#1d5a8a"
-                        />
-                        <rect
-                            x="4"
-                            y="12"
-                            width="20"
-                            height="2"
-                            fill="#c5dff0"
-                        />
-                        <rect
-                            x="4"
-                            y="16"
-                            width="14"
-                            height="2"
-                            fill="#c5dff0"
-                        />
-                        <rect
-                            x="4"
-                            y="20"
-                            width="17"
-                            height="2"
-                            fill="#c5dff0"
-                        />
-                    </svg>
-                    <div class="card-name">Copyparty</div>
-                    <div class="card-desc">
-                        file hosting<br />upload &amp; share
-                    </div>
-                </a>
-                <a class="card" href="https://paste.okcomp.ir">
-                    <div class="card-tag">TOOLS</div>
-                    <img
-                        class="card-icon card-icon--cover"
-                        src="./images/microbin.png"
-                        alt="MicroBin logo"
-                        loading="lazy"
-                        decoding="async"
-                    />
-                    <div class="card-name">Pastebin</div>
-                    <div class="card-desc">
-                        text snippets &amp; notes<br />microbin instance
-                    </div>
-                </a>
-                <a class="card" href="https://chess.okcomp.ir">
-                    <div class="card-tag">GAME</div>
-                    <svg
-                        class="card-icon"
-                        viewBox="0 0 28 28"
-                        xmlns="http://www.w3.org/2000/svg"
-                        style="image-rendering: pixelated"
-                    >
-                        <rect
-                            x="2"
-                            y="2"
-                            width="24"
-                            height="24"
-                            fill="#6b4c3b"
-                        />
-                        <rect x="6" y="6" width="2" height="2" fill="#ffffff" />
-                        <rect
-                            x="12"
-                            y="6"
-                            width="2"
-                            height="2"
-                            fill="#ffffff"
-                        />
-                        <rect
-                            x="18"
-                            y="6"
-                            width="2"
-                            height="2"
-                            fill="#ffffff"
-                        />
-                        <rect
-                            x="6"
-                            y="12"
-                            width="2"
-                            height="2"
-                            fill="#ffffff"
-                        />
-                        <rect
-                            x="12"
-                            y="12"
-                            width="2"
-                            height="2"
-                            fill="#ffffff"
-                        />
-                        <rect
-                            x="18"
-                            y="12"
-                            width="2"
-                            height="2"
-                            fill="#ffffff"
-                        />
-                        <rect
-                            x="6"
-                            y="18"
-                            width="2"
-                            height="2"
-                            fill="#ffffff"
-                        />
-                        <rect
-                            x="12"
-                            y="18"
-                            width="2"
-                            height="2"
-                            fill="#ffffff"
-                        />
-                        <rect
-                            x="18"
-                            y="18"
-                            width="2"
-                            height="2"
-                            fill="#ffffff"
-                        />
-                    </svg>
 
-                    <div class="card-name">Chess</div>
 
-                    <div class="card-desc">play & share<br />online chess</div>
-                </a>
-                <a class="card" href="https://hp.okcomp.ir">
-                    <div class="card-tag">ARTIST</div>
-                    <svg
-                        class="card-icon"
-                        viewBox="0 0 28 28"
-                        xmlns="http://www.w3.org/2000/svg"
-                        style="image-rendering: pixelated"
-                    >
-                        <defs>
-                            <linearGradient
-                                id="hp-card-bg"
-                                x1="0%"
-                                y1="0%"
-                                x2="100%"
-                                y2="0%"
-                            >
-                                <stop offset="0%" stop-color="#7be4ff" />
-                                <stop offset="42%" stop-color="#1a8ec1" />
-                                <stop offset="58%" stop-color="#10253b" />
-                                <stop offset="100%" stop-color="#09090d" />
-                            </linearGradient>
-                            <linearGradient
-                                id="hp-card-glow"
-                                x1="0%"
-                                y1="0%"
-                                x2="0%"
-                                y2="100%"
-                            >
-                                <stop offset="0%" stop-color="#d7f8ff" />
-                                <stop offset="100%" stop-color="#56c8ee" />
-                            </linearGradient>
-                        </defs>
-                        <rect
-                            x="2"
-                            y="2"
-                            width="24"
-                            height="24"
-                            rx="2"
-                            fill="url(#hp-card-bg)"
-                        />
-                        <path
-                            d="M2 2H13.5C12 8 11.8 17.5 12.3 26H2Z"
-                            fill="url(#hp-card-glow)"
-                            opacity="0.85"
-                        />
-                        <path d="M13 2H15.8L14.2 26H12.8Z" fill="#123a56" />
-                        <path
-                            d="M10.4 5.2C9.8 9.4 9.4 14.7 9.1 26"
-                            stroke="#07131f"
-                            stroke-width="1.1"
-                            stroke-linecap="round"
-                        />
-                        <path
-                            d="M8.6 5.7 10.4 5l-1.4-1.8M10.4 5l1.9-1.2M10.4 5l-2.2.6M10.4 5l2.2.8M10.4 5l-1 2.1M10.4 5l1.3 2.1"
-                            stroke="#07131f"
-                            stroke-width="0.8"
-                            stroke-linecap="round"
-                        />
-                        <path
-                            d="M6.6 19.3C6.3 21.3 6.2 23.2 6.1 26"
-                            stroke="#09141f"
-                            stroke-width="0.9"
-                            stroke-linecap="round"
-                        />
-                        <path
-                            d="M5.4 19.6 6.6 19.2l-1-1.2M6.6 19.2l1.2-.8M6.6 19.2l-1.4.3M6.6 19.2l1.5.5M6.6 19.2l-.8 1.5M6.6 19.2l1 1.4"
-                            stroke="#09141f"
-                            stroke-width="0.6"
-                            stroke-linecap="round"
-                        />
-                        <path
-                            d="M11.8 21.1C11.6 22.4 11.5 23.7 11.4 26"
-                            stroke="#0a1622"
-                            stroke-width="0.8"
-                            stroke-linecap="round"
-                        />
-                        <path
-                            d="M10.8 21.2 11.8 21l-.8-1M11.8 21l1-.7M11.8 21l-1.2.3M11.8 21l1.2.4M11.8 21l-.6 1.2M11.8 21l.8 1.1"
-                            stroke="#0a1622"
-                            stroke-width="0.55"
-                            stroke-linecap="round"
-                        />
-                        <path
-                            d="M13.5 12.5c1.1-1.2 2-1.8 3-1.8m-1.6-.5v5.6m2.3-4.4v4.4m0-2.3c.4-.8 1-1.2 1.6-1.2m1.1-.6v4.8m0-2.5c.4-.7 1-1.1 1.5-1.1"
-                            stroke="#f5f9ff"
-                            stroke-width="0.7"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            fill="none"
-                        />
-                        <path
-                            d="M18.4 19.1v4.8m0-1.8c.6-.7 1.1-.9 1.7-.6.5.2.7.8.7 1.7m1.6-4.1v4.8m0-1.8c.6-.7 1.1-.9 1.7-.6.4.2.7.8.7 1.7"
-                            stroke="#ffffff"
-                            stroke-width="0.7"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            fill="none"
-                        />
-                    </svg>
-                    <div class="card-name">Hadi Pakzad</div>
-                    <div class="card-desc">
-                        music, photos &amp; archive<br />mirror of
-                        djaf.ir/hadipakzad
-                    </div>
-                </a>
-                <a class="card" href="https://factorio.okcomp.ir/">
-                    <div class="card-tag">TOOLS</div>
-                    <img
-                        class="card-icon card-icon--cover"
-                        src="./images/factorio.png"
-                        width="86"
-                        height="86"
-                        alt="Factorio logo"
-                        loading="lazy"
-                        decoding="async"
-                    />
-                    <div class="card-name">Factorio Toolkit</div>
-                    <div class="card-desc">
-                        factorio video game tools, lab, calc and cheatsheets
-                    </div>
-                </a>
-                <a class="card" href="https://feishin.okcomp.ir/">
-                    <div class="card-tag">MUSIC</div>
-                    <img
-                        class="card-icon card-icon--cover"
-                        src="./images/feinshin.png"
-                        alt="Feishin logo"
-                        loading="lazy"
-                        decoding="async"
-                    />
-                    <div class="card-name">Feishin</div>
-                    <div class="card-desc">
-                        desktop-style music player<br />for subsonic servers
-                    </div>
-                </a>
-                <a class="card card--ci" href="https://ci.okcomp.ir">
-                    <div class="card-tag">ARTIST</div>
-                    <img
-                        class="card-icon card-icon--ci"
-                        src="./images/ci.svg"
-                        alt="Citizen Insane logo"
-                        loading="lazy"
-                        decoding="async"
-                    />
-                    <div class="card-copy">
-                        <div class="card-name">Citizen Insane</div>
-                        <div class="card-desc">
-                            radiohead stories, posters and lyrics<br />mirror of
+
+<a class="card card--feature card--radio" href="https://radio.okcomp.ir">
+<div class="card-tag">MUSIC</div>
+<svg aria-hidden="true" class="card-icon" style="image-rendering: pixelated" viewbox="0 0 104 78" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#00c27a" height="46" width="84" x="8" y="18"></rect>
+<rect fill="#d6fff0" height="38" opacity="0.8" width="76" x="12" y="22"></rect>
+<rect fill="#00543c" height="20" width="34" x="22" y="31"></rect>
+<rect fill="#ffd666" height="2" width="24" x="27" y="36"></rect>
+<rect fill="#ffd666" height="2" width="18" x="27" y="42"></rect>
+<circle cx="72" cy="41" fill="#00543c" r="10"></circle>
+<circle cx="72" cy="41" fill="#ffd666" r="4"></circle>
+<rect fill="#00543c" height="4" transform="rotate(-18 20 12)" width="46" x="20" y="12"></rect>
+<rect fill="#00543c" height="6" width="10" x="16" y="64"></rect>
+<rect fill="#00543c" height="6" width="10" x="72" y="64"></rect>
+</svg>
+<div class="card-copy"><div class="card-name">Radio</div><div class="card-desc">self-hosted web radio<br/>live streams &amp; stations</div></div>
+</a>
+<a class="card card--ci" href="https://ci.okcomp.ir">
+<div class="card-tag">ARTIST</div>
+<img alt="Citizen Insane logo" class="card-icon card-icon--ci" decoding="async" loading="lazy" src="./images/ci.svg"/>
+<div class="card-copy">
+<div class="card-name">Citizen Insane</div>
+<div class="card-desc">
+                            radiohead stories, posters and lyrics<br/>mirror of
                             citizeninsane.eu
                         </div>
+</div>
+</a>
+<a class="card" href="https://hp.okcomp.ir">
+<div class="card-tag">ARTIST</div>
+<svg class="card-icon" style="image-rendering: pixelated" viewbox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<lineargradient id="hp-card-bg" x1="0%" x2="100%" y1="0%" y2="0%">
+<stop offset="0%" stop-color="#7be4ff"></stop>
+<stop offset="42%" stop-color="#1a8ec1"></stop>
+<stop offset="58%" stop-color="#10253b"></stop>
+<stop offset="100%" stop-color="#09090d"></stop>
+</lineargradient>
+<lineargradient id="hp-card-glow" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#d7f8ff"></stop>
+<stop offset="100%" stop-color="#56c8ee"></stop>
+</lineargradient>
+</defs>
+<rect fill="url(#hp-card-bg)" height="24" rx="2" width="24" x="2" y="2"></rect>
+<path d="M2 2H13.5C12 8 11.8 17.5 12.3 26H2Z" fill="url(#hp-card-glow)" opacity="0.85"></path>
+<path d="M13 2H15.8L14.2 26H12.8Z" fill="#123a56"></path>
+<path d="M10.4 5.2C9.8 9.4 9.4 14.7 9.1 26" stroke="#07131f" stroke-linecap="round" stroke-width="1.1"></path>
+<path d="M8.6 5.7 10.4 5l-1.4-1.8M10.4 5l1.9-1.2M10.4 5l-2.2.6M10.4 5l2.2.8M10.4 5l-1 2.1M10.4 5l1.3 2.1" stroke="#07131f" stroke-linecap="round" stroke-width="0.8"></path>
+<path d="M6.6 19.3C6.3 21.3 6.2 23.2 6.1 26" stroke="#09141f" stroke-linecap="round" stroke-width="0.9"></path>
+<path d="M5.4 19.6 6.6 19.2l-1-1.2M6.6 19.2l1.2-.8M6.6 19.2l-1.4.3M6.6 19.2l1.5.5M6.6 19.2l-.8 1.5M6.6 19.2l1 1.4" stroke="#09141f" stroke-linecap="round" stroke-width="0.6"></path>
+<path d="M11.8 21.1C11.6 22.4 11.5 23.7 11.4 26" stroke="#0a1622" stroke-linecap="round" stroke-width="0.8"></path>
+<path d="M10.8 21.2 11.8 21l-.8-1M11.8 21l1-.7M11.8 21l-1.2.3M11.8 21l1.2.4M11.8 21l-.6 1.2M11.8 21l.8 1.1" stroke="#0a1622" stroke-linecap="round" stroke-width="0.55"></path>
+<path d="M13.5 12.5c1.1-1.2 2-1.8 3-1.8m-1.6-.5v5.6m2.3-4.4v4.4m0-2.3c.4-.8 1-1.2 1.6-1.2m1.1-.6v4.8m0-2.5c.4-.7 1-1.1 1.5-1.1" fill="none" stroke="#f5f9ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="0.7"></path>
+<path d="M18.4 19.1v4.8m0-1.8c.6-.7 1.1-.9 1.7-.6.5.2.7.8.7 1.7m1.6-4.1v4.8m0-1.8c.6-.7 1.1-.9 1.7-.6.4.2.7.8.7 1.7" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="0.7"></path>
+</svg>
+<div class="card-name">Hadi Pakzad</div>
+<div class="card-desc">
+                        music, photos &amp; archive<br/>mirror of
+                        djaf.ir/hadipakzad
                     </div>
-                </a>
-                <div
-                    class="card card--wide card--disabled is-hidden"
-                    id="searchEmpty"
-                >
-                    <div class="card-name">No Matches</div>
-                </div>
-            </div>
-
-            <div class="contact">
-                contact &nbsp;/&nbsp;
+</a>
+<a class="card" href="https://factorio.okcomp.ir/">
+<div class="card-tag">TOOLS</div>
+<img alt="Factorio logo" class="card-icon card-icon--cover" decoding="async" height="86" loading="lazy" src="./images/factorio.png" width="86"/>
+<div class="card-name">Factorio Toolkit</div>
+<div class="card-desc">
+                        factorio video game tools, lab, calc and cheatsheets
+                    </div>
+</a>
+<a class="card" href="https://nr.okcomp.ir">
+<div class="card-tag">MUSIC</div>
+<!-- pixel music icon -->
+<svg class="card-icon" style="image-rendering: pixelated" viewbox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#5ba3d0" height="12" width="4" x="4" y="8"></rect>
+<rect fill="#5ba3d0" height="16" width="4" x="10" y="4"></rect>
+<rect fill="#5ba3d0" height="10" width="4" x="16" y="10"></rect>
+<rect fill="#5ba3d0" height="14" width="4" x="22" y="6"></rect>
+</svg>
+<div class="card-name">Navidrome</div>
+<div class="card-desc">
+                        music streaming<br/>subsonic api
+                    </div>
+</a>
+<a class="card" href="https://cp.okcomp.ir">
+<div class="card-tag">FILES</div>
+<svg class="card-icon" style="image-rendering: pixelated" viewbox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#5ba3d0" height="16" width="24" x="2" y="8"></rect>
+<rect fill="#1d5a8a" height="4" width="10" x="2" y="6"></rect>
+<rect fill="#c5dff0" height="2" width="20" x="4" y="12"></rect>
+<rect fill="#c5dff0" height="2" width="14" x="4" y="16"></rect>
+<rect fill="#c5dff0" height="2" width="17" x="4" y="20"></rect>
+</svg>
+<div class="card-name">Copyparty</div>
+<div class="card-desc">
+                        file hosting<br/>upload &amp; share
+                    </div>
+</a>
+<a class="card" href="https://paste.okcomp.ir">
+<div class="card-tag">TOOLS</div>
+<img alt="MicroBin logo" class="card-icon card-icon--cover" decoding="async" loading="lazy" src="./images/microbin.png"/>
+<div class="card-name">Pastebin</div>
+<div class="card-desc">
+                        text snippets &amp; notes<br/>microbin instance
+                    </div>
+</a>
+<a class="card" href="https://feishin.okcomp.ir/">
+<div class="card-tag">MUSIC</div>
+<img alt="Feishin logo" class="card-icon card-icon--cover" decoding="async" loading="lazy" src="./images/feinshin.png"/>
+<div class="card-name">Feishin</div>
+<div class="card-desc">
+                        desktop-style music player<br/>for subsonic servers
+                    </div>
+</a>
+<a class="card" href="https://type.okcomp.ir"><div class="card-tag">GAMES</div><svg aria-hidden="true" class="card-icon" style="image-rendering: pixelated" viewbox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><rect fill="#5ba3d0" height="15" width="24" x="2" y="7"></rect><rect fill="#c5dff0" height="3" width="4" x="4" y="9"></rect><rect fill="#c5dff0" height="3" width="4" x="10" y="9"></rect><rect fill="#c5dff0" height="3" width="4" x="16" y="9"></rect><rect fill="#c5dff0" height="3" width="4" x="6" y="14"></rect><rect fill="#c5dff0" height="3" width="4" x="12" y="14"></rect><rect fill="#c5dff0" height="3" width="4" x="18" y="14"></rect><rect fill="#1d5a8a" height="2" width="12" x="8" y="19"></rect></svg><div class="card-name">Monkeytype</div><div class="card-desc">minimal typing test<br/>speed &amp; accuracy tracker</div></a>
+<a class="card" href="https://vert.okcomp.ir"><div class="card-tag">CONVERTOR</div><svg aria-hidden="true" class="card-icon" style="image-rendering: pixelated" viewbox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><rect fill="#5ba3d0" height="20" width="12" x="4" y="4"></rect><rect fill="#c5dff0" height="16" width="12" x="8" y="8"></rect><path d="M17 7h6v6" fill="none" stroke="#d04a20" stroke-width="3"></path><path d="M23 7l-8 8" fill="none" stroke="#d04a20" stroke-width="3"></path><rect fill="#1d5a8a" height="2" width="8" x="10" y="18"></rect></svg><div class="card-name">VERT</div><div class="card-desc">local file converter<br/>images, audio, video, docs</div></a>
+<a class="card" href="https://tools.okcomp.ir"><div class="card-tag">TOOLS</div><svg aria-hidden="true" class="card-icon" style="image-rendering: pixelated" viewbox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><rect fill="#5ba3d0" height="20" width="20" x="4" y="4"></rect><rect fill="#c5dff0" height="2" width="14" x="7" y="8"></rect><rect fill="#c5dff0" height="2" width="6" x="7" y="13"></rect><rect fill="#1d5a8a" height="2" width="6" x="15" y="13"></rect><rect fill="#c5dff0" height="2" width="14" x="7" y="18"></rect></svg><div class="card-name">IT Tools</div><div class="card-desc">developer utilities<br/>encoders, generators, helpers</div></a>
+<a class="card" href="https://cyberchef.okcomp.ir"><div class="card-tag">TOOLS</div><svg aria-hidden="true" class="card-icon" style="image-rendering: pixelated" viewbox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><rect fill="#5ba3d0" height="16" width="20" x="4" y="8"></rect><rect fill="none" height="6" stroke="#1d5a8a" stroke-width="3" width="12" x="8" y="4"></rect><rect fill="#c5dff0" height="3" width="10" x="9" y="14"></rect><rect fill="#d04a20" height="4" width="4" x="12" y="17"></rect></svg><div class="card-name">CyberChef</div><div class="card-desc">decode, encode &amp; hash<br/>data analysis workbench</div></a>
+<a class="card" href="https://moodist.okcomp.ir"><div class="card-tag">FOCUS</div><svg aria-hidden="true" class="card-icon" style="image-rendering: pixelated" viewbox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><rect fill="#5ba3d0" height="8" width="5" x="3" y="10"></rect><rect fill="#5ba3d0" height="14" width="5" x="9" y="7"></rect><rect fill="#5ba3d0" height="20" width="5" x="15" y="4"></rect><rect fill="#5ba3d0" height="10" width="4" x="21" y="9"></rect><rect fill="#c5dff0" height="2" width="18" x="5" y="21"></rect></svg><div class="card-name">Moodist</div><div class="card-desc">ambient sound mixer<br/>focus, calm &amp; sleep</div></a>
+<a class="card" href="https://draw.okcomp.ir"><div class="card-tag">TOOLS</div><svg aria-hidden="true" class="card-icon" style="image-rendering: pixelated" viewbox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><rect fill="#c5dff0" height="18" width="22" x="3" y="5"></rect><rect fill="#ffffff" height="14" opacity="0.75" width="18" x="5" y="7"></rect><path d="M7 18L13 12L17 16L21 10" fill="none" stroke="#d04a20" stroke-width="2"></path><rect fill="#5ba3d0" height="3" width="5" x="7" y="9"></rect></svg><div class="card-name">ExcaliDash</div><div class="card-desc">hand-drawn whiteboard<br/>diagrams &amp; sketches</div></a>
+<a class="card" href="https://pdf.okcomp.ir"><div class="card-tag">CONVERTOR</div><svg aria-hidden="true" class="card-icon" style="image-rendering: pixelated" viewbox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><rect fill="#5ba3d0" height="22" width="14" x="6" y="3"></rect><path d="M20 3v7h5" fill="none" stroke="#1d5a8a" stroke-width="3"></path><rect fill="#c5dff0" height="2" width="12" x="9" y="12"></rect><rect fill="#c5dff0" height="2" width="9" x="9" y="16"></rect><rect fill="#d04a20" height="2" width="11" x="9" y="20"></rect></svg><div class="card-name">BentoPDF</div><div class="card-desc">privacy-first PDF toolkit<br/>merge, split, edit &amp; convert</div></a>
+<a class="card" href="https://memos.okcomp.ir"><div class="card-tag">NOTES</div><svg aria-hidden="true" class="card-icon" style="image-rendering: pixelated" viewbox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><rect fill="#5ba3d0" height="22" width="18" x="5" y="3"></rect><rect fill="#c5dff0" height="2" width="12" x="8" y="7"></rect><rect fill="#c5dff0" height="2" width="10" x="8" y="12"></rect><rect fill="#c5dff0" height="2" width="12" x="8" y="17"></rect><rect fill="#d04a20" height="4" width="4" x="20" y="20"></rect><rect fill="#1d5a8a" height="3" width="3" x="3" y="6"></rect><rect fill="#1d5a8a" height="3" width="3" x="3" y="13"></rect><rect fill="#1d5a8a" height="3" width="3" x="3" y="20"></rect></svg><div class="card-name">Memos</div><div class="card-desc">self-hosted memo hub<br/>quick notes &amp; knowledge capture</div></a>
+<div class="card card--wide card--disabled is-hidden" id="searchEmpty">
+<div class="card-name">No Matches</div>
+</div>
+</div>
+<div class="contact">
+                contact  / 
                 <a href="mailto:ok@okcomp.ir">ok@okcomp.ir</a>
-            </div>
-
-            <div class="statusbar">
-                <span
-                    ><span class="status-dot"></span>all systems
-                    operational</span
-                >
-
-                <span>okcomp</span>
-            </div>
-        </div>
-        <script>
+</div>
+<div class="statusbar">
+<span><span class="status-dot"></span>all systems
+                    operational</span>
+<span>okcomp</span>
+</div>
+</div>
+<script>
             (function () {
                 const canvas = document.createElement("canvas");
                 canvas.style.cssText =
@@ -1704,6 +1300,10 @@
                 const toggle = document.getElementById("themeToggle");
                 const root = document.documentElement;
                 const mq = window.matchMedia("(prefers-color-scheme: dark)");
+                const siteMenu = document.getElementById("siteMenu");
+                const menuToggle = document.getElementById("menuToggle");
+                const themeLabel = toggle.querySelector(".theme-label") || toggle;
+                const themeIcon = toggle.querySelector(".theme-icon");
                 const searchInput = document.getElementById("serviceSearch");
                 const tagFilters = document.getElementById("tagFilters");
                 const serviceCards = Array.from(
@@ -1725,7 +1325,8 @@
 
                 function applyTheme(t) {
                     root.setAttribute("data-theme", t);
-                    toggle.textContent = t === "dark" ? "◑ LIGHT" : "◐ DARK";
+                    themeLabel.textContent = t === "dark" ? "LIGHT" : "DARK";
+                    if (themeIcon) themeIcon.textContent = t === "dark" ? "◑" : "◐";
                     localStorage.setItem("theme", t);
                 }
 
@@ -1733,6 +1334,28 @@
                     localStorage.getItem("theme") ||
                         (mq.matches ? "dark" : "light"),
                 );
+
+                function setMenuOpen(isOpen) {
+                    siteMenu.classList.toggle("is-open", isOpen);
+                    menuToggle.setAttribute("aria-expanded", String(isOpen));
+                    menuToggle.textContent = isOpen ? "× CLOSE" : "☰ MENU";
+                }
+
+                menuToggle.addEventListener("click", () => {
+                    setMenuOpen(!siteMenu.classList.contains("is-open"));
+                });
+
+                document.addEventListener("click", (event) => {
+                    if (!siteMenu.contains(event.target)) {
+                        setMenuOpen(false);
+                    }
+                });
+
+                document.addEventListener("keydown", (event) => {
+                    if (event.key === "Escape") {
+                        setMenuOpen(false);
+                    }
+                });
 
                 toggle.addEventListener("click", () => {
                     applyTheme(
@@ -1865,5 +1488,5 @@
                 });
             })();
         </script>
-    </body>
+</body>
 </html>

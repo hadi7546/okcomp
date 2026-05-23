@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>okcomp changelog</title>
+        <link rel="icon" href="./images/favicon.png" />
+        <style>
+            @font-face {
+                font-family: "VT323";
+                src: url("VT323-Regular.ttf") format("truetype");
+                font-weight: normal;
+                font-style: normal;
+                font-display: swap;
+            }
+
+            :root {
+                --bg: #f0f0e8;
+                --fg: #1a1a18;
+                --blue: #5ba3d0;
+                --blue-dark: #1d5a8a;
+                --blue-pale: #c5dff0;
+                --accent: #d04a20;
+                --gray: #888880;
+                --card-bg: #ffffff;
+            }
+
+            @media (prefers-color-scheme: light) {
+                :root:not([data-theme="light"]) {
+                    --bg: #0c0c0a;
+                    --fg: #e8e8e0;
+                    --blue: #6ab4e0;
+                    --blue-dark: #8ac8f0;
+                    --blue-pale: #0e2232;
+                    --accent: #e05828;
+                    --gray: #7a7a72;
+                    --card-bg: #181816;
+                }
+            }
+
+            :root[data-theme="dark"] {
+                --bg: #0c0c0a;
+                --fg: #e8e8e0;
+                --blue: #6ab4e0;
+                --blue-dark: #8ac8f0;
+                --blue-pale: #0e2232;
+                --accent: #e05828;
+                --gray: #7a7a72;
+                --card-bg: #181816;
+            }
+
+            :root[data-theme="light"] {
+                --bg: #f0f0e8;
+                --fg: #1a1a18;
+                --blue: #5ba3d0;
+                --blue-dark: #1d5a8a;
+                --blue-pale: #c5dff0;
+                --accent: #d04a20;
+                --gray: #888880;
+                --card-bg: #ffffff;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                background: var(--bg);
+                color: var(--fg);
+                font-family: "Share Tech Mono", monospace;
+                min-height: 100vh;
+                position: relative;
+                overflow-x: hidden;
+                transition:
+                    background 0.25s,
+                    color 0.25s;
+            }
+
+            body::before {
+                content: "";
+                position: fixed;
+                inset: 0;
+                background-image:
+                    linear-gradient(
+                        rgba(91, 163, 208, 0.07) 1px,
+                        transparent 1px
+                    ),
+                    linear-gradient(
+                        90deg,
+                        rgba(91, 163, 208, 0.07) 1px,
+                        transparent 1px
+                    );
+                background-size: 8px 8px;
+                pointer-events: none;
+                z-index: 0;
+            }
+
+            .container {
+                position: relative;
+                z-index: 1;
+                width: 100%;
+                max-width: 880px;
+                margin: 0 auto;
+                padding: 6.5rem 2rem 3rem;
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .theme-toggle {
+                position: fixed;
+                top: 28px;
+                left: 32px;
+                font-family: "Share Tech Mono", monospace;
+                font-size: 0.6rem;
+                letter-spacing: 0.12em;
+                color: var(--fg);
+                border: 2px solid var(--fg);
+                padding: 5px 9px;
+                background: var(--card-bg);
+                box-shadow: 3px 3px 0 var(--fg);
+                text-transform: uppercase;
+                z-index: 2;
+                opacity: 0.7;
+                cursor: pointer;
+            }
+
+            .theme-toggle:hover {
+                opacity: 1;
+            }
+
+            .header {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .header-logo {
+                width: 76px;
+                height: 76px;
+                image-rendering: pixelated;
+            }
+
+            .eyebrow {
+                font-size: 0.62rem;
+                letter-spacing: 0.2em;
+                color: var(--gray);
+                text-transform: uppercase;
+            }
+
+            .title {
+                font-family: "VT323", monospace;
+                font-size: 4.4rem;
+                line-height: 1;
+                letter-spacing: 0.04em;
+                text-shadow:
+                    4px 0 0 var(--blue),
+                    0 4px 0 var(--blue-pale);
+            }
+
+            .subtitle {
+                font-size: 0.76rem;
+                letter-spacing: 0.16em;
+                color: var(--gray);
+                text-transform: uppercase;
+            }
+
+            .actions {
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            .action-link {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border: 2px solid var(--fg);
+                background: var(--card-bg);
+                color: var(--fg);
+                box-shadow: 4px 4px 0 var(--fg);
+                padding: 10px 14px;
+                font-size: 0.66rem;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+                text-decoration: none;
+                transition:
+                    background 0.25s,
+                    color 0.25s,
+                    border-color 0.25s,
+                    box-shadow 0.08s,
+                    transform 0.08s;
+            }
+
+            .action-link:hover {
+                transform: translate(-2px, -2px);
+                box-shadow: 6px 6px 0 var(--fg);
+            }
+
+            .action-link:active {
+                transform: translate(2px, 2px);
+                box-shadow: 2px 2px 0 var(--fg);
+            }
+
+            .panel {
+                border: 2px solid var(--fg);
+                background: var(--card-bg);
+                box-shadow: 6px 6px 0 var(--fg);
+                padding: 1.4rem 1.25rem;
+            }
+
+            .entry + .entry {
+                margin-top: 1.4rem;
+                padding-top: 1.4rem;
+                border-top: 1px solid rgba(91, 163, 208, 0.25);
+            }
+
+            .entry-date {
+                display: inline-block;
+                margin-bottom: 0.9rem;
+                padding: 4px 8px;
+                border: 1px solid var(--blue);
+                background: var(--blue-pale);
+                color: var(--blue-dark);
+                font-size: 0.65rem;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+            }
+
+            .entry ul {
+                list-style: none;
+                display: flex;
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+
+            .entry li {
+                position: relative;
+                padding-left: 1rem;
+                font-size: 0.82rem;
+                line-height: 1.65;
+                color: var(--fg);
+            }
+
+            .entry li::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 0.52rem;
+                width: 6px;
+                height: 6px;
+                background: var(--accent);
+                box-shadow: 1px 1px 0 var(--fg);
+            }
+
+            .entry code {
+                color: var(--blue-dark);
+                font-family: inherit;
+            }
+
+            .note {
+                font-size: 0.68rem;
+                letter-spacing: 0.12em;
+                color: var(--gray);
+                text-transform: uppercase;
+            }
+
+            .statusbar {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                font-size: 0.65rem;
+                letter-spacing: 0.15em;
+                color: var(--gray);
+                border-top: 1px solid rgba(0, 0, 0, 0.12);
+                padding-top: 12px;
+            }
+
+            .status-dot {
+                display: inline-block;
+                width: 7px;
+                height: 7px;
+                background: #4caf50;
+                margin-right: 6px;
+            }
+
+            @media (max-width: 640px) {
+                .container {
+                    padding: 5.6rem 1rem 2rem;
+                }
+
+                .title {
+                    font-size: 3.4rem;
+                }
+
+                .action-link {
+                    width: 100%;
+                }
+
+                .theme-toggle {
+                    top: 14px;
+                    left: 14px;
+                    font-size: 0.5rem;
+                    padding: 4px 8px;
+                }
+
+                .statusbar {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            Theme
+        </button>
+
+        <div class="container">
+            <div class="header">
+                <img
+                    src="./images/favicon.png"
+                    class="header-logo"
+                    alt="okcomp"
+                />
+                <div class="eyebrow">okcomp</div>
+                <div class="title">Changelog</div>
+                <div class="subtitle">landing updates and service additions</div>
+            </div>
+
+            <div class="actions">
+                <a class="action-link" href="./index.html">Back To Landing</a>
+                <a class="action-link" href="./CHANGELOG.md">Raw Markdown</a>
+            </div>
+
+            <div class="panel">
+                <div class="entry">
+                    <div class="entry-date">2026-04-22</div>
+                    <ul>
+                        <li>
+                            Added a dedicated <code>changelog.html</code> page
+                            and a landing button linking to it.
+                        </li>
+                        <li>
+                            Added <code>paste.okcomp.ir</code> to the landing
+                            service grid with a MicroBin icon.
+                        </li>
+                        <li>
+                            Moved landing image assets under
+                            <code>sites/landing/images/</code>.
+                        </li>
+                        <li>
+                            Added <code>ci.okcomp.ir</code> / Citizen Insane as
+                            a featured landing card.
+                        </li>
+                        <li>
+                            Added service search to filter cards by visible
+                            text.
+                        </li>
+                        <li>
+                            Added mirror notes for Hadi Pakzad and Citizen
+                            Insane.
+                        </li>
+                        <li>
+                            Updated the Citizen Insane logo assets and card
+                            styling.
+                        </li>
+                        <li>Removed the More to come tile.</li>
+                        <li>
+                            Added an account request note above the contact
+                            section.
+                        </li>
+                        <li>
+                            Tightened the mobile card layout and kept the
+                            featured card wide.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="note">Keep this page in sync with CHANGELOG.md.</div>
+
+            <div class="statusbar">
+                <span><span class="status-dot"></span>history online</span>
+                <span>okcomp</span>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                const root = document.documentElement;
+                const toggle = document.getElementById("themeToggle");
+
+                function applyTheme(theme) {
+                    root.setAttribute("data-theme", theme);
+                    localStorage.setItem("theme", theme);
+                }
+
+                const storedTheme =
+                    localStorage.getItem("theme") ||
+                    (window.matchMedia("(prefers-color-scheme: dark)").matches
+                        ? "dark"
+                        : "light");
+                applyTheme(storedTheme);
+
+                toggle.addEventListener("click", () => {
+                    const nextTheme =
+                        root.getAttribute("data-theme") === "dark"
+                            ? "light"
+                            : "dark";
+                    applyTheme(nextTheme);
+                });
+            })();
+        </script>
+    </body>
+</html>
