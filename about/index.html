@@ -177,6 +177,25 @@
 
         .site-menu.is-open .menu-panel {
             display: flex;
+            animation: menu-in 0.18s ease both;
+        }
+
+        @keyframes menu-in {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .about-card,
+            .site-menu.is-open .menu-panel {
+                animation: none;
+            }
         }
 
         .menu-item {
