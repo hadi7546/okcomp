@@ -6,6 +6,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>okcomp</title>
 <link href="./images/favicon.png" rel="icon"/>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
 <style>
             @font-face {
                 font-family: "VT323";
@@ -29,7 +30,7 @@
                 --ci-logo-filter: none;
             }
 
-            @media (prefers-color-scheme: light) {
+            @media (prefers-color-scheme: dark) {
                 :root:not([data-theme="light"]) {
                     --bg: #0c0c0a;
                     --fg: #e8e8e0;
@@ -838,6 +839,18 @@
                     letter-spacing: 0.14em;
                 }
 
+                .search-hint {
+                    display: none;
+                }
+
+                .search-meta {
+                    flex-wrap: wrap;
+                }
+
+                .search-count {
+                    font-size: 0.5rem;
+                }
+
                 .search-input {
                     padding: 8px 9px;
                     box-shadow: 3px 3px 0 var(--fg);
@@ -955,9 +968,273 @@
                 pointer-events: none;
                 z-index: 10;
             }
+
+            /* —— UX polish —— */
+            .skip-link {
+                position: fixed;
+                top: 12px;
+                left: 12px;
+                z-index: 100;
+                padding: 8px 12px;
+                background: var(--card-bg);
+                color: var(--fg);
+                border: 2px solid var(--fg);
+                box-shadow: 3px 3px 0 var(--fg);
+                font-size: 0.65rem;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                text-decoration: none;
+                transform: translateY(-140%);
+                transition: transform 0.2s ease;
+            }
+
+            .skip-link:focus-visible {
+                transform: translateY(0);
+                outline: none;
+            }
+
+            html::after {
+                content: "";
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                z-index: 9;
+                background: radial-gradient(
+                    ellipse 85% 70% at 50% 45%,
+                    transparent 40%,
+                    rgba(0, 0, 0, 0.06) 100%
+                );
+            }
+
+            :root[data-theme="dark"] html::after {
+                background: radial-gradient(
+                    ellipse 85% 70% at 50% 45%,
+                    transparent 35%,
+                    rgba(0, 0, 0, 0.35) 100%
+                );
+            }
+
+            .container > * {
+                animation: rise-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+            }
+
+            .header { animation-delay: 0.04s; }
+            .searchbar { animation-delay: 0.1s; }
+            .grid { animation-delay: 0.16s; }
+            .contact { animation-delay: 0.22s; }
+            .statusbar { animation-delay: 0.28s; }
+
+            @keyframes rise-in {
+                from { opacity: 0; transform: translateY(14px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            .title {
+                animation: title-glow 5s ease-in-out infinite;
+            }
+
+            @keyframes title-glow {
+                0%, 100% {
+                    text-shadow: 4px 0 0 var(--blue), 0 4px 0 var(--blue-pale);
+                }
+                50% {
+                    text-shadow: 5px 0 0 var(--blue), 0 5px 0 var(--blue-pale),
+                        0 0 24px rgba(91, 163, 208, 0.15);
+                }
+            }
+
+            .header-logo {
+                transition: transform 0.2s ease;
+            }
+
+            .header:hover .header-logo {
+                transform: translateY(-2px) rotate(-2deg);
+            }
+
+            .search-meta {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                min-height: 1rem;
+            }
+
+            .search-count {
+                font-size: 0.58rem;
+                letter-spacing: 0.14em;
+                color: var(--gray);
+                text-transform: uppercase;
+                transition: color 0.2s;
+            }
+
+            .search-count.is-filtered {
+                color: var(--blue-dark);
+            }
+
+            .search-hint {
+                font-size: 0.52rem;
+                letter-spacing: 0.1em;
+                color: var(--gray);
+                opacity: 0.75;
+                text-transform: uppercase;
+            }
+
+            .search-hint kbd {
+                display: inline-block;
+                padding: 1px 5px 0;
+                border: 1px solid var(--gray);
+                background: var(--card-bg);
+                font: inherit;
+                font-size: 0.9em;
+                line-height: 1.3;
+            }
+
+            .search-input-wrap {
+                position: relative;
+                width: 100%;
+            }
+
+            .search-clear {
+                position: absolute;
+                right: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 28px;
+                height: 28px;
+                border: 2px solid var(--fg);
+                background: var(--blue-pale);
+                color: var(--blue-dark);
+                font: inherit;
+                font-size: 0.85rem;
+                line-height: 1;
+                cursor: pointer;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.15s, transform 0.08s, box-shadow 0.08s;
+            }
+
+            .search-clear.is-visible {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .search-clear:hover {
+                transform: translateY(-50%) translate(-1px, -1px);
+                box-shadow: 2px 2px 0 var(--fg);
+            }
+
+            .search-input.has-clear {
+                padding-right: 42px;
+            }
+
+            .grid > a.card {
+                animation: card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+            }
+
+            .grid > a.card:nth-child(1) { animation-delay: 0.2s; }
+            .grid > a.card:nth-child(2) { animation-delay: 0.24s; }
+            .grid > a.card:nth-child(3) { animation-delay: 0.28s; }
+            .grid > a.card:nth-child(4) { animation-delay: 0.32s; }
+            .grid > a.card:nth-child(5) { animation-delay: 0.36s; }
+            .grid > a.card:nth-child(6) { animation-delay: 0.4s; }
+            .grid > a.card:nth-child(n + 7) { animation-delay: 0.44s; }
+
+            @keyframes card-in {
+                from { opacity: 0; transform: translateY(10px) scale(0.98); }
+                to { opacity: 1; transform: translateY(0) scale(1); }
+            }
+
+            .card::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    120deg,
+                    transparent 30%,
+                    rgba(255, 255, 255, 0.12) 50%,
+                    transparent 70%
+                );
+                transform: translateX(-120%);
+                transition: transform 0.45s ease;
+                pointer-events: none;
+            }
+
+            .card:hover::before {
+                height: 4px;
+            }
+
+            .card:hover::after {
+                transform: translateX(120%);
+            }
+
+            .card:focus-visible {
+                outline: 2px solid var(--blue);
+                outline-offset: 3px;
+            }
+
+            .card--wide .card-desc {
+                font-size: 0.62rem;
+                max-width: 28rem;
+                margin: 0 auto;
+            }
+
+            .empty-reset {
+                margin-top: 10px;
+                border: 2px solid var(--fg);
+                background: var(--card-bg);
+                color: var(--fg);
+                box-shadow: 3px 3px 0 var(--fg);
+                padding: 8px 12px 6px;
+                font: inherit;
+                font-size: 0.62rem;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                cursor: pointer;
+                transition: transform 0.08s, box-shadow 0.08s;
+            }
+
+            .empty-reset:hover {
+                transform: translate(-1px, -1px);
+                box-shadow: 4px 4px 0 var(--fg);
+            }
+
+            .card--wide:hover::after {
+                transform: translateX(-120%);
+            }
+
+            .site-menu.is-open .menu-panel {
+                animation: menu-in 0.18s ease both;
+            }
+
+            @keyframes menu-in {
+                from { opacity: 0; transform: translateY(-6px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            .menu-toggle:focus-visible,
+            .menu-item:focus-visible,
+            .tag-filter-button:focus-visible,
+            .search-input:focus-visible,
+            .search-clear:focus-visible,
+            .empty-reset:focus-visible {
+                outline: 2px solid var(--blue);
+                outline-offset: 2px;
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                *, *::before, *::after {
+                    animation-duration: 0.01ms !important;
+                    animation-iteration-count: 1 !important;
+                    transition-duration: 0.01ms !important;
+                }
+                .scanbeam, .ghost, .ghost-2, .ghost-3, .highway, .status-dot, .title {
+                    animation: none !important;
+                }
+            }
         </style>
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to services</a>
 <!-- scanbeam -->
 <div class="scanbeam"></div>
 <!-- okcomp menu -->
@@ -1080,20 +1357,27 @@
 <line stroke="#1a1a18" stroke-linecap="square" stroke-width="5" x1="4" x2="32" y1="4" y2="32"></line>
 <line stroke="#1a1a18" stroke-linecap="square" stroke-width="5" x1="32" x2="4" y1="4" y2="32"></line>
 </svg>
-<div class="container">
+<div class="container" id="main-content">
 <div class="header">
 <img alt="okcomp" class="header-logo" src="./images/favicon.png"/>
 <div class="title">okcomp</div>
 <div class="subtitle">self-hosted services and archives</div>
 </div>
 <div class="searchbar">
+<div class="search-meta">
 <label class="search-label" for="serviceSearch">Search Services</label>
+<span aria-live="polite" class="search-count" id="searchCount"></span>
+</div>
 <div class="search-controls">
-<input autocomplete="off" class="search-input" id="serviceSearch" placeholder="search by name, tag, or description" spellcheck="false" type="search"/>
-<div class="tag-filters" id="tagFilters"></div>
+<div class="search-input-wrap">
+<input aria-controls="serviceGrid" autocomplete="off" class="search-input" id="serviceSearch" placeholder="search by name, tag, or description" spellcheck="false" type="search"/>
+<button aria-label="Clear search" class="search-clear" hidden id="searchClear" type="button">×</button>
+</div>
+<div class="tag-filters" id="tagFilters" role="group" aria-label="Filter by tag"></div>
+<span class="search-hint"><kbd>/</kbd> focus · <kbd>esc</kbd> clear</span>
 </div>
 </div>
-<div class="grid">
+<div aria-label="Services" class="grid" id="serviceGrid" role="list">
 
 
 
@@ -1224,8 +1508,10 @@
 <a class="card" href="https://draw.okcomp.ir"><div class="card-tag">TOOLS</div><svg aria-hidden="true" class="card-icon" style="image-rendering: pixelated" viewbox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><rect fill="#c5dff0" height="18" width="22" x="3" y="5"></rect><rect fill="#ffffff" height="14" opacity="0.75" width="18" x="5" y="7"></rect><path d="M7 18L13 12L17 16L21 10" fill="none" stroke="#d04a20" stroke-width="2"></path><rect fill="#5ba3d0" height="3" width="5" x="7" y="9"></rect></svg><div class="card-name">ExcaliDash</div><div class="card-desc">hand-drawn whiteboard<br/>diagrams &amp; sketches</div></a>
 <a class="card" href="https://pdf.okcomp.ir"><div class="card-tag">CONVERTOR</div><svg aria-hidden="true" class="card-icon" style="image-rendering: pixelated" viewbox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><rect fill="#5ba3d0" height="22" width="14" x="6" y="3"></rect><path d="M20 3v7h5" fill="none" stroke="#1d5a8a" stroke-width="3"></path><rect fill="#c5dff0" height="2" width="12" x="9" y="12"></rect><rect fill="#c5dff0" height="2" width="9" x="9" y="16"></rect><rect fill="#d04a20" height="2" width="11" x="9" y="20"></rect></svg><div class="card-name">BentoPDF</div><div class="card-desc">privacy-first PDF toolkit<br/>merge, split, edit &amp; convert</div></a>
 <a class="card" href="https://memos.okcomp.ir"><div class="card-tag">NOTES</div><svg aria-hidden="true" class="card-icon" style="image-rendering: pixelated" viewbox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><rect fill="#5ba3d0" height="22" width="18" x="5" y="3"></rect><rect fill="#c5dff0" height="2" width="12" x="8" y="7"></rect><rect fill="#c5dff0" height="2" width="10" x="8" y="12"></rect><rect fill="#c5dff0" height="2" width="12" x="8" y="17"></rect><rect fill="#d04a20" height="4" width="4" x="20" y="20"></rect><rect fill="#1d5a8a" height="3" width="3" x="3" y="6"></rect><rect fill="#1d5a8a" height="3" width="3" x="3" y="13"></rect><rect fill="#1d5a8a" height="3" width="3" x="3" y="20"></rect></svg><div class="card-name">Memos</div><div class="card-desc">self-hosted memo hub<br/>quick notes &amp; knowledge capture</div></a>
-<div class="card card--wide card--disabled is-hidden" id="searchEmpty">
+<div class="card card--wide card--disabled is-hidden" id="searchEmpty" role="status">
 <div class="card-name">No Matches</div>
+<div class="card-desc">Try another keyword or tag, or reset filters below.</div>
+<button class="empty-reset" id="searchReset" type="button">Clear filters</button>
 </div>
 </div>
 <div class="contact">
@@ -1253,6 +1539,10 @@
                 }
                 resize();
                 window.addEventListener("resize", resize);
+
+                const prefersReducedMotion = window.matchMedia(
+                    "(prefers-reduced-motion: reduce)",
+                ).matches;
 
                 const COLORS = [
                     "#5ba3d0",
@@ -1283,16 +1573,20 @@
                         const px = Math.round(p.x / SZ) * SZ;
                         const py = Math.round(p.y / SZ) * SZ;
                         ctx.fillRect(px, py, p.size, p.size);
-                        p.y -= p.speed;
-                        p.x += p.drift;
-                        if (p.y + p.size < 0) {
-                            p.y = H + p.size;
-                            p.x = Math.random() * W;
+                        if (!prefersReducedMotion) {
+                            p.y -= p.speed;
+                            p.x += p.drift;
+                            if (p.y + p.size < 0) {
+                                p.y = H + p.size;
+                                p.x = Math.random() * W;
+                            }
+                            if (p.x > W) p.x = 0;
+                            if (p.x < 0) p.x = W;
                         }
-                        if (p.x > W) p.x = 0;
-                        if (p.x < 0) p.x = W;
                     }
-                    requestAnimationFrame(draw);
+                    if (!prefersReducedMotion) {
+                        requestAnimationFrame(draw);
+                    }
                 }
                 draw();
 
@@ -1448,10 +1742,29 @@
                     }
                 }
 
+                function syncSearchClear() {
+                    const hasQuery = searchInput.value.length > 0;
+                    searchClear.hidden = !hasQuery;
+                    searchClear.classList.toggle("is-visible", hasQuery);
+                    searchInput.classList.toggle("has-clear", hasQuery);
+                }
+
+                function updateSearchCount(visibleCount, isFiltered) {
+                    if (!isFiltered) {
+                        searchCount.textContent = `${totalServices} services`;
+                        searchCount.classList.remove("is-filtered");
+                        return;
+                    }
+                    searchCount.textContent = `${visibleCount} of ${totalServices}`;
+                    searchCount.classList.add("is-filtered");
+                }
+
                 function filterServices(query, tag) {
                     const normalizedQuery = normalizeText(query);
                     const normalizedTag = normalizeText(tag);
                     let visibleCount = 0;
+                    const isFiltered =
+                        normalizedQuery.length > 0 || normalizedTag.length > 0;
 
                     for (const card of serviceCards) {
                         const cardText = normalizeText(card.textContent);
@@ -1470,10 +1783,17 @@
 
                     searchEmpty.classList.toggle(
                         "is-hidden",
-                        visibleCount > 0 ||
-                            (normalizedQuery.length === 0 &&
-                                normalizedTag.length === 0),
+                        visibleCount > 0 || !isFiltered,
                     );
+                    updateSearchCount(visibleCount, isFiltered);
+                    syncSearchClear();
+                }
+
+                function clearFilters() {
+                    searchInput.value = "";
+                    selectedTag = "";
+                    updateFilters();
+                    searchInput.focus();
                 }
 
                 function updateFilters() {
@@ -1482,9 +1802,42 @@
                 }
 
                 renderTagFilters();
+                updateFilters();
 
                 searchInput.addEventListener("input", (event) => {
                     filterServices(event.target.value, selectedTag);
+                });
+
+                searchClear.addEventListener("click", () => {
+                    searchInput.value = "";
+                    updateFilters();
+                    searchInput.focus();
+                });
+
+                searchReset.addEventListener("click", clearFilters);
+
+                document.addEventListener("keydown", (event) => {
+                    if (
+                        event.key === "/" &&
+                        !event.metaKey &&
+                        !event.ctrlKey &&
+                        !event.altKey &&
+                        document.activeElement !== searchInput &&
+                        !(document.activeElement instanceof HTMLInputElement) &&
+                        !(document.activeElement instanceof HTMLTextAreaElement)
+                    ) {
+                        event.preventDefault();
+                        searchInput.focus();
+                    }
+
+                    if (
+                        event.key === "Escape" &&
+                        document.activeElement === searchInput &&
+                        (searchInput.value || selectedTag)
+                    ) {
+                        event.preventDefault();
+                        clearFilters();
+                    }
                 });
             })();
         </script>
